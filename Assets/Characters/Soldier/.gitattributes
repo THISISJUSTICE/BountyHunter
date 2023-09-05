@@ -1,1 +1,2 @@
 Swat[[:space:]]Idle.fbx filter=lfs diff=lfs merge=lfs -text
+RifleWalking.fbx filter=lfs diff=lfs merge=lfs -text
