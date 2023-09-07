@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 
 //장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
@@ -19,7 +20,14 @@ public class ObstacleBasic : MonoBehaviour
     public ObstacleStatus obstacleStatus; //장애물 스테이터스
     
     int curHealthPoint; //장애물 현재 체력
-    
+
+    void Start(){
+
+    }
+
+    void ObstacleBasicInit(){
+        curHealthPoint = obstacleStatus.maxHealthPoint;
+    }
 
     //정해진 범위에 플레이어가 들어오면 장해물 등장
     private void OnTriggerEnter(Collider other) {
@@ -32,5 +40,31 @@ public class ObstacleBasic : MonoBehaviour
             transform.position += (appearPos - waitPos) / appearFrame;
             yield return new WaitForSeconds(appearSpeed);
         } 
+    }
+
+    //돌진 시 받는 데미지 계산
+    public void RushDamaged(int armor, float acceleration){
+        Debug.Log("충돌");
+        if(obstacleStatus.armor / 2 < armor){
+            HPDecrese(armor / obstacleStatus.armor * (int)(acceleration * 20));
+        }
+    }
+
+    //공격 시 받는 데미지 계산
+    public void AttackDamaged(int attackDamage, int magicDamage){
+
+    }
+
+    //받은 데미지를 바탕으로 체력 감소
+    void HPDecrese(int dmg){
+        Debug.Log("dmg: " + dmg);
+        curHealthPoint -= dmg;
+        if(curHealthPoint <= 0) Death();
+    }
+
+    //체력이 0이 되어 파괴
+    void Death(){
+        Debug.Log("죽음");
+        gameObject.SetActive(false);
     }
 }

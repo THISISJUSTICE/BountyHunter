@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerBasic : MonoBehaviour
@@ -29,27 +30,29 @@ public class PlayerBasic : MonoBehaviour
     protected int curMagicPoint; //플레이어 현재 마나
     protected float curSpeed; //플레이어의 현재 이동 속도
     
-    Rigidbody rigid;
     protected float[] lrSpace; //좌우 이동 위치
     protected int lrIndex; //현재 좌우 위치
     protected int curMoveWay; //현재 이동 방향(0: 앞, -1: 좌, 1: 우)
+    protected float rushTime; //돌진을 진행한 시간
     protected Animator anim;
     protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
 
     #endregion
+
+    #region Awake, Start
 
     private void Awake(){
         PlayerBasicInit(); 
     }
 
     protected void PlayerBasicInit(){
-        rigid = GetComponent<Rigidbody>();
         lrSpace = new float[mapSpace];
         curHealthPoint = playerStatus.maxHealthPoint;
         curMagicPoint = playerStatus.maxMagicPoint;
         curSpeed = 0;
         anim = transform.GetChild(0).GetComponent<Animator>();
         meshTransform = transform.GetChild(0).GetComponent<Transform>();
+        rushTime = 0;
     }
 
     private void Start(){
@@ -69,10 +72,14 @@ public class PlayerBasic : MonoBehaviour
         }
     }
 
+    #endregion
+    
     private void FixedUpdate() {
         Move();
         MoveAnimation();
     }
+
+    #region FixedUpdate
 
     //↑: 가속, ↓: 멈춤, →: 오른쪽으로 한 칸 이동, ←: 왼쪽으로 한 칸 이동
     protected void Move(){
@@ -84,9 +91,14 @@ public class PlayerBasic : MonoBehaviour
             curSpeed = playerStatus.speed;
             if(Input.GetKey(KeyCode.UpArrow)){
                 curSpeed = playerStatus.acceleration;
+                rushTime += 0.02f;
             }
+            else rushTime = 0;
         }
-        else curSpeed = 0;
+        else {
+            curSpeed = 0;
+            rushTime = 0;
+        }
         gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed);
 
         //좌우 이동
@@ -144,5 +156,24 @@ public class PlayerBasic : MonoBehaviour
         else rot=25;
         rot*=curMoveWay;
         meshTransform.localRotation = Quaternion.Euler(0, rot, 0);
+    }
+    
+    #endregion
+
+    private void OnCollisionEnter(Collision other) {
+        //돌진 중 장애물과 부딪히면 데미지를 받거나 입음
+        if(other.gameObject.tag == "Obstacle" && curSpeed == playerStatus.acceleration && rushTime > 0.8f){
+            ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
+            obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
+            RushDamaged(obstacleBasic.obstacleStatus.armor);
+        }
+    }
+
+    protected void RushDamaged(int armor){
+
+    }
+
+    protected void HPDecrese(int dmg){
+
     }
 }

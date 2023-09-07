@@ -682,11 +682,12 @@ MonoBehaviour:
   lrMoveFrame: 5
   mapSpace: 5
   playerStatus:
+    level: 0
     speed: 0.02
-    acceleration: 0.07
+    acceleration: 0.1
     maxHealthPoint: 0
     maxMagicPoint: 0
-    armor: 0
+    armor: 10
     magicResitant: 0
     attackDamage: 0
     magicDamage: 0
@@ -854,8 +855,8 @@ MonoBehaviour:
   appearSpeed: 0.05
   appearFrame: 20
   obstacleStatus:
-    maxHealthPoint: 0
-    armor: 0
+    maxHealthPoint: 2
+    armor: 5
     magicRegistant: 0
 --- !u!23 &1965759961
 MeshRenderer:
@@ -1068,6 +1069,7 @@ MonoBehaviour:
   lrMoveFrame: 0
   mapSpace: 5
   playerStatus:
+    level: 0
     speed: 0
     acceleration: 0
     maxHealthPoint: 0
