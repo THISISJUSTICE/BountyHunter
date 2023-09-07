@@ -32,8 +32,9 @@ public class PlayerBasic : MonoBehaviour
     Rigidbody rigid;
     protected float[] lrSpace; //좌우 이동 위치
     protected int lrIndex; //현재 좌우 위치
-    protected bool lrMoving; //현재 좌우 이동 중인지 확인
+    protected int curMoveWay; //현재 이동 방향(0: 앞, -1: 좌, 1: 우)
     protected Animator anim;
+    protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
 
     #endregion
 
@@ -48,6 +49,7 @@ public class PlayerBasic : MonoBehaviour
         curMagicPoint = playerStatus.maxMagicPoint;
         curSpeed = 0;
         anim = transform.GetChild(0).GetComponent<Animator>();
+        meshTransform = transform.GetChild(0).GetComponent<Transform>();
     }
 
     private void Start(){
@@ -59,7 +61,7 @@ public class PlayerBasic : MonoBehaviour
         int temp = lrSpace.Length / 2; 
         float space = 0 - (lrPos * temp);
         lrIndex = temp;
-        lrMoving = false;
+        curMoveWay = 0;
 
         for(int i=0; i<lrSpace.Length; ++i){
             lrSpace[i] = space;
@@ -88,7 +90,7 @@ public class PlayerBasic : MonoBehaviour
         gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed);
 
         //좌우 이동
-        if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && !lrMoving){
+        if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && curMoveWay == 0){
             if(!ObstacleCheck(lrIndex, lrTemp)){
                 StartCoroutine(LRMove(lrIndex, lrTemp));
                 lrIndex = lrTemp;
@@ -115,12 +117,12 @@ public class PlayerBasic : MonoBehaviour
     protected IEnumerator LRMove(int start, int end){
         float gap = (lrSpace[end] - lrSpace[start]) / lrMoveFrame; //프레임 당 이동 값
         gameObject.transform.position = new Vector3(lrSpace[lrIndex], gameObject.transform.position.y, gameObject.transform.position.z);
-        lrMoving = true;
+        curMoveWay = start > end ? -1 : 1;
         for(int i=0; i<lrMoveFrame; ++i){
             gameObject.transform.position = new Vector3(gameObject.transform.position.x + gap, gameObject.transform.position.y, gameObject.transform.position.z);
             yield return new WaitForSeconds(lrMoveDelay/lrMoveFrame);
         }
-        lrMoving = false;
+        curMoveWay = 0;
     }
 
     //이동 애니메이션
@@ -129,7 +131,18 @@ public class PlayerBasic : MonoBehaviour
         if(curSpeed == 0) animSpeed = 0;
         else if(curSpeed == playerStatus.speed) animSpeed = 0.5f;
         else animSpeed = 1;
-
+        RotateWay(animSpeed);
+        if(curMoveWay != 0 && curSpeed == 0) animSpeed = 1;
         anim.SetFloat("MoveSpeed", animSpeed);
+    }
+
+    //현재 좌우 이동 방향과 속도에 따라 플레이어 메쉬의 각도 변환(90, 45, 25)
+    void RotateWay(float animSpeed){
+        float rot;
+        if(animSpeed < 0.5f) rot = 90;
+        else if(animSpeed == 0.5f) rot = 40;
+        else rot=25;
+        rot*=curMoveWay;
+        meshTransform.localRotation = Quaternion.Euler(0, rot, 0);
     }
 }
