@@ -37,6 +37,7 @@ public class ObstacleBasic : MonoBehaviour
 
     //장애물 등장
     IEnumerator Appear(){
+        gameObject.GetComponent<MeshRenderer>().enabled = true;        
         for(int i=0; i<appearFrame; ++i){
             transform.position += (appearPos - waitPos) / appearFrame;
             yield return new WaitForSeconds(appearSpeed);

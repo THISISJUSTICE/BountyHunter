@@ -123,11 +123,11 @@ public class PlayerBasic : MonoBehaviour
         return false;
     }
 
+    //전방이 막혀 있는지 확인
     protected bool ObstacleFCheck(){
-        if(rushTime > 0.8f) return false;
         if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, 
         transform.forward, out RaycastHit hit, transform.rotation, 0.5f)){
-            if(hit.collider.tag == "Obstacle") {
+            if((hit.collider.tag == "Obstacle" && rushTime <= 0.8f) || hit.collider.tag == "Background") {
                 return true;
             }
         }
