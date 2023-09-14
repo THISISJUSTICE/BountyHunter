@@ -87,7 +87,7 @@ public class PlayerBasic : MonoBehaviour
         int lrTemp = lrIndex + (int)hor;
 
         //이동 및 가속
-        if(!Input.GetKey(KeyCode.DownArrow)){
+        if(!Input.GetKey(KeyCode.DownArrow) && !ObstacleFCheck()){
             curSpeed = playerStatus.speed;
             if(Input.GetKey(KeyCode.UpArrow)){
                 curSpeed = playerStatus.acceleration;
@@ -103,7 +103,7 @@ public class PlayerBasic : MonoBehaviour
 
         //좌우 이동
         if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && curMoveWay == 0){
-            if(!ObstacleCheck(lrIndex, lrTemp)){
+            if(!ObstacleLRCheck(lrIndex, lrTemp)){
                 StartCoroutine(LRMove(lrIndex, lrTemp));
                 lrIndex = lrTemp;
             }            
@@ -111,17 +111,26 @@ public class PlayerBasic : MonoBehaviour
     }
 
     //좌우 이동 중 이동하려는 방향에 레이를 쏴서 장애물이 있는지 확인
-    protected bool ObstacleCheck(int start, int end){
+    protected bool ObstacleLRCheck(int start, int end){
         int way = start > end ? -1 : 1;
         if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, 
         transform.right * way, out RaycastHit hit, transform.rotation, lrPos)){
-            Debug.Log(hit.collider.tag + "와 충돌");
             if(hit.collider.tag == "Obstacle"){
-                Debug.Log("장애물 충돌");
                 return true;
             }
         }
 
+        return false;
+    }
+
+    protected bool ObstacleFCheck(){
+        if(rushTime > 0.8f) return false;
+        if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, 
+        transform.forward, out RaycastHit hit, transform.rotation, 0.5f)){
+            if(hit.collider.tag == "Obstacle") {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -144,7 +153,7 @@ public class PlayerBasic : MonoBehaviour
         else if(curSpeed == playerStatus.speed) animSpeed = 0.5f;
         else animSpeed = 1;
         RotateWay(animSpeed);
-        if(curMoveWay != 0 && curSpeed == 0) animSpeed = 1;
+        if(curMoveWay != 0) animSpeed = 1;
         anim.SetFloat("MoveSpeed", animSpeed);
     }
 
@@ -162,10 +171,13 @@ public class PlayerBasic : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         //돌진 중 장애물과 부딪히면 데미지를 받거나 입음
-        if(other.gameObject.tag == "Obstacle" && curSpeed == playerStatus.acceleration && rushTime > 0.8f){
-            ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
-            obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
-            RushDamaged(obstacleBasic.obstacleStatus.armor);
+        if(other.gameObject.tag == "Obstacle"){
+            if(curSpeed == playerStatus.acceleration && rushTime > 0.8f){
+                rushTime = 0;
+                ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
+                obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
+                RushDamaged(obstacleBasic.obstacleStatus.armor);
+            }
         }
     }
 

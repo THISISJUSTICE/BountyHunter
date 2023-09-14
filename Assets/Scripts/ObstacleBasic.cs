@@ -6,6 +6,7 @@ using UnityEngine;
 //장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
 public class ObstacleBasic : MonoBehaviour
 {
+    public int obstacleKind; //장애물의 종류를 표현
     public Vector3 waitPos; //장애물이 대기 중일 때의 위치
     public Vector3 appearPos; //장애물이 나타날 때의 위치
     public float appearSpeed; //장애물이 나타나는 속도
@@ -22,7 +23,7 @@ public class ObstacleBasic : MonoBehaviour
     int curHealthPoint; //장애물 현재 체력
 
     void Start(){
-
+        ObstacleBasicInit();
     }
 
     void ObstacleBasicInit(){
@@ -57,14 +58,13 @@ public class ObstacleBasic : MonoBehaviour
 
     //받은 데미지를 바탕으로 체력 감소
     void HPDecrese(int dmg){
-        Debug.Log("dmg: " + dmg);
         curHealthPoint -= dmg;
         if(curHealthPoint <= 0) Death();
     }
 
     //체력이 0이 되어 파괴
     void Death(){
-        Debug.Log("죽음");
+        Debug.Log("장애물 파괴");
         gameObject.SetActive(false);
     }
 }
