@@ -8,7 +8,7 @@ public class ObstacleBasic : MonoBehaviour
 {
     public int obstacleKind; //장애물의 종류를 표현
     public Vector3 waitPos; //장애물이 대기 중일 때의 위치
-    public Vector3 appearPos; //장애물이 나타날 때의 위치
+    Vector3 appearPos; //장애물이 나타날 때의 위치
     public float appearSpeed; //장애물이 나타나는 속도
     public int appearFrame; //장애물이 나타나는 프레임
 
@@ -28,6 +28,7 @@ public class ObstacleBasic : MonoBehaviour
 
     void ObstacleBasicInit(){
         curHealthPoint = obstacleStatus.maxHealthPoint;
+        appearPos = gameObject.transform.position;
     }
 
     //정해진 범위에 플레이어가 들어오면 장해물 등장

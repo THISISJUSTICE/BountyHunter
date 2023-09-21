@@ -8,7 +8,7 @@ public class DungeonManager : MonoBehaviour
 {
     public string dungeonKind; //던전의 종류
     public int dungeonLevel; //던전의 레벨
-    public int dungeonLength; //던전의 길이(플로어의 scale.z*10)
+    public int dungeonLength; //던전의 길이(플로어의 scale.z*10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     public List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
 
     void Start(){

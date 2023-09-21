@@ -194,6 +194,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2049932684}
+  - component: {fileID: 2049932685}
   m_Layer: 0
   m_Name: ObstacleStatusManager
   m_TagString: Untagged
@@ -216,3 +217,68 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2049932685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049932683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca73e0904f1985241be505d23f8b024f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rockObstacleData:
+  - kind: 0
+    prefabName: fff
+    objScale:
+    - 1
+    - 2
+    - 3
+    colScale:
+    - 1
+    - 2
+    - 3
+    maxHealthPoint: 10
+    armor: 5
+    magicRegistant: 5
+  - kind: 1
+    prefabName: fff
+    objScale:
+    - 1
+    - 2
+    - 3
+    colScale:
+    - 1
+    - 2
+    - 3
+    maxHealthPoint: 10
+    armor: 5
+    magicRegistant: 5
+  - kind: 2
+    prefabName: fff
+    objScale:
+    - 1
+    - 2
+    - 3
+    colScale:
+    - 1
+    - 2
+    - 3
+    maxHealthPoint: 10
+    armor: 5
+    magicRegistant: 5
+  - kind: 3
+    prefabName: fff
+    objScale:
+    - 1
+    - 2
+    - 3
+    colScale:
+    - 1
+    - 2
+    - 3
+    maxHealthPoint: 10
+    armor: 5
+    magicRegistant: 5
