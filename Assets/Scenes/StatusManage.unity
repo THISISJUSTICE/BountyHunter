@@ -230,55 +230,96 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rockObstacleData:
-  - kind: 0
-    prefabName: fff
+  - prefabName: Rock_Obstacle0
+    area: 0100000001000000
+    waitPos:
+    - 0
+    - -2
+    - 0
+    appearWaitTime: 0
+    appearSpeed: 0.05
+    appearheight: 1
     objScale:
     - 1
     - 2
-    - 3
+    - 1
+    colPos:
+    - 1
+    - 1
+    - 1
     colScale:
     - 1
-    - 2
-    - 3
+    - 1
+    - 1
     maxHealthPoint: 10
-    armor: 5
+    armor: 10
     magicRegistant: 5
-  - kind: 1
-    prefabName: fff
+  - prefabName: Rock_Obstacle1
+    area: 0100000001000000
+    waitPos:
+    - 0
+    - -2
+    - 0
+    appearWaitTime: 0
+    appearSpeed: 0.05
+    appearheight: 1
     objScale:
     - 1
-    - 2
-    - 3
+    - 1
+    - 1
+    colPos:
+    - 1
+    - 1
+    - 1
     colScale:
     - 1
-    - 2
-    - 3
-    maxHealthPoint: 10
-    armor: 5
-    magicRegistant: 5
-  - kind: 2
-    prefabName: fff
+    - 1
+    - 1
+    maxHealthPoint: 15
+    armor: 7
+    magicRegistant: 3
+  - prefabName: Rock_Obstacle2
+    area: 0100000001000000
+    waitPos:
+    - 0
+    - -2
+    - 0
+    appearWaitTime: 0
+    appearSpeed: 0.05
+    appearheight: 0.9
     objScale:
     - 1
-    - 2
-    - 3
+    - 1
+    - 1
+    colPos:
+    - 1
+    - 1
+    - 1
     colScale:
     - 1
-    - 2
-    - 3
-    maxHealthPoint: 10
-    armor: 5
+    - 1
+    - 1
+    maxHealthPoint: 5
+    armor: 20
     magicRegistant: 5
-  - kind: 3
-    prefabName: fff
+  - prefabName: Rock_Obstacle3
+    area: 0200000001000000
+    waitPos: []
+    appearWaitTime: 0
+    appearSpeed: -2
+    appearheight: 1.3
     objScale:
     - 1
-    - 2
-    - 3
-    colScale:
     - 1
-    - 2
-    - 3
-    maxHealthPoint: 10
-    armor: 5
-    magicRegistant: 5
+    - 1
+    colPos:
+    - 0.2
+    - -0.2
+    - 0
+    colScale:
+    - 3.2
+    - 2.6
+    - 2.1
+    maxHealthPoint: 40
+    armor: 20
+    magicRegistant: 10
