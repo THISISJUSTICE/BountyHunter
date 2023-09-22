@@ -25,8 +25,8 @@ public class DefineObstacles : MonoBehaviour
         public int magicRegistant; //장애물의 마법 저항력
     }
     public Data[] rockObstacleData;
-    string basicfileName = "ObstacleData"; //파일 명 앞에 장애물의 종류 붙이기
-    string filePath = "C:/Users/yulop/RPGGame/BountyHunter/Assets/MapInfos/DungeonObstaclesKind"; //파일 경로
+    public const string basicfileName = "ObstacleData"; //파일 명 앞에 장애물의 종류 붙이기
+    public const string filePath = "C:/Users/yulop/RPGGame/BountyHunter/Assets/MapInfos/DungeonObstaclesKind"; //파일 경로
 
     
     private void Awake() {
@@ -35,7 +35,7 @@ public class DefineObstacles : MonoBehaviour
         
 
     //json 파일 저장하기
-    public void SaveData(Data[] data, string fileName)
+    void SaveData(Data[] data, string fileName)
     {
         //클래스를 문자열로 된 Json 데이터로 변환
         string ToJsonData = "";
@@ -49,5 +49,21 @@ public class DefineObstacles : MonoBehaviour
         byte[] dataByte = Encoding.UTF8.GetBytes(ToJsonData);
         fileStream.Write(dataByte, 0, dataByte.Length);
         fileStream.Close();
+    }
+
+    public List<Data> LoadJsonFile<T>(string loadPath, string fileName)
+    {
+        FileStream fileStream = new FileStream(string.Format("{0}/{1}.json", loadPath, fileName), FileMode.Open);
+        byte[] data = new byte[fileStream.Length];
+        fileStream.Read(data, 0, data.Length);
+        fileStream.Close();
+        string jsonData = Encoding.UTF8.GetString(data);
+        string[] lines = jsonData.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+        List<Data> jsonList = new List<Data>();
+        for(int i=0; i<lines.Length; ++i){
+            jsonList.Add(JsonUtility.FromJson<Data>(lines[i]));
+        }
+
+        return jsonList;
     }
 }
