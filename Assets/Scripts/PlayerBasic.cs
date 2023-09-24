@@ -11,19 +11,6 @@ public class PlayerBasic : MonoBehaviour
     public float lrMoveDelay; //플레이어의 좌우 이동 딜레이
     public int lrMoveFrame; //플레이어의 좌우 이동 프레임
     public int mapSpace = 5; // 맵의 좌우 칸 수(무조건 홀수)
-
-    [System.Serializable]
-    public class PlayerStatus{ //플레이어 스테이터스 클래스
-        public int level; //플레이어 레벨
-        public float speed; //플레이어 기본 속도
-        public float acceleration; //플레이어 돌진 속도
-        public int maxHealthPoint; //플레이어 최대 체력
-        public int maxMagicPoint; //플레이어 최대 마나
-        public int armor; //플레이어 방어력
-        public int magicResitant; //플레이어 마법저항력
-        public int attackDamage; //플레이어 공격력
-        public int magicDamage; //플레이어 마법공격력
-    }
     public PlayerStatus playerStatus; //플레이어 스테이터스
     
     protected int curHealthPoint; //플레이어 현재 체력

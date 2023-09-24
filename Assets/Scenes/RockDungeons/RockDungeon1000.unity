@@ -234,7 +234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.91172457
+      value: 3.2
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalPosition.y
@@ -278,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543787, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f363d29669c5fc140851514a42a53eff, type: 3}
@@ -325,6 +325,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rock_Obstacle3
       objectReference: {fileID: 0}
+    - target: {fileID: 1889113663095710433, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1889113663095710434, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -335,15 +339,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1889113663095710436, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.8
+      value: 3.61
       objectReference: {fileID: 0}
     - target: {fileID: 1889113663095710436, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1889113663095710436, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1889113663095710436, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
       propertyPath: m_LocalRotation.w
@@ -741,6 +745,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RockDungeonStage:
   - {fileID: 4900000, guid: a5a0ac6545f725c499b690efd524108f, type: 3}
+  rockObstacles:
+  - {fileID: 7946587218401312656, guid: cc60063e71dbfe5428c3160053f89a37, type: 3}
+  - {fileID: 1795314740598185661, guid: 1b3047f8fd7cea44c838c6307dcc65d5, type: 3}
+  - {fileID: 5121932360660543787, guid: f363d29669c5fc140851514a42a53eff, type: 3}
+  - {fileID: 1889113663095710433, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
+  - {fileID: 5058994934139817591, guid: b98276212bc97784682216795f79917c, type: 3}
 --- !u!4 &991416512
 Transform:
   m_ObjectHideFlags: 0
@@ -931,7 +941,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58ce82e9dac50042aed537a642d41ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacleKind: 0
   waitPos: {x: 0, y: -2, z: 12}
   appearPos: {x: 0, y: 0, z: 0}
   appearSpeed: 0.05
@@ -1056,13 +1065,13 @@ MonoBehaviour:
   lrMoveFrame: 5
   mapSpace: 5
   playerStatus:
+    maxHealthPoint: 0
+    armor: 10
+    magicRegistant: 0
     level: 0
     speed: 0.02
     acceleration: 0.1
-    maxHealthPoint: 0
     maxMagicPoint: 0
-    armor: 10
-    magicResitant: 0
     attackDamage: 0
     magicDamage: 0
 --- !u!54 &1386195268

@@ -230,96 +230,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rockObstacleData:
-  - prefabName: Rock_Obstacle0
+  - prefabKind: 0
     area: 0100000001000000
-    waitPos:
-    - 0
-    - -2
-    - 0
+    waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 1
-    objScale:
-    - 1
-    - 2
-    - 1
-    colPos:
-    - 1
-    - 1
-    - 1
-    colScale:
-    - 1
-    - 1
-    - 1
+    objScale: {x: 1, y: 2, z: 1}
+    colPos: {x: 1, y: 1, z: 1}
+    colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 10
     armor: 10
     magicRegistant: 5
-  - prefabName: Rock_Obstacle1
+  - prefabKind: 1
     area: 0100000001000000
-    waitPos:
-    - 0
-    - -2
-    - 0
+    waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 1
-    objScale:
-    - 1
-    - 1
-    - 1
-    colPos:
-    - 1
-    - 1
-    - 1
-    colScale:
-    - 1
-    - 1
-    - 1
+    objScale: {x: 1, y: 1, z: 1}
+    colPos: {x: 1, y: 1, z: 1}
+    colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 15
     armor: 7
     magicRegistant: 3
-  - prefabName: Rock_Obstacle2
+  - prefabKind: 2
     area: 0100000001000000
-    waitPos:
-    - 0
-    - -2
-    - 0
+    waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 0.9
-    objScale:
-    - 1
-    - 1
-    - 1
-    colPos:
-    - 1
-    - 1
-    - 1
-    colScale:
-    - 1
-    - 1
-    - 1
+    objScale: {x: 1, y: 1, z: 1}
+    colPos: {x: 1, y: 1, z: 1}
+    colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 5
     armor: 20
     magicRegistant: 5
-  - prefabName: Rock_Obstacle3
+  - prefabKind: 3
     area: 0200000001000000
-    waitPos: []
+    waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: -2
     appearheight: 1.3
-    objScale:
-    - 1
-    - 1
-    - 1
-    colPos:
-    - 0.2
-    - -0.2
-    - 0
-    colScale:
-    - 3.2
-    - 2.6
-    - 2.1
+    objScale: {x: 1, y: 1, z: 1}
+    colPos: {x: 0.2, y: -0.2, z: 0}
+    colScale: {x: 3.2, y: 2.6, z: 2.1}
     maxHealthPoint: 40
     armor: 20
     magicRegistant: 10

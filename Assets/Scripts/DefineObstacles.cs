@@ -10,23 +10,27 @@ using UnityEditor.Timeline.Actions;
 public class DefineObstacles : MonoBehaviour
 {
     [System.Serializable]
-    public class Data{
-        public string prefabName; //원본 장애물의 프리팹 이름
+    public class Data{ //장애물 공통 데이터
+        public int prefabKind; //원본 장애물의 프리팹 종류
         public int[] area; //차지하는 칸 수 가로, 세로
-        public float[] waitPos; //장애물이 대기 중일 때의 포지션 x,y,z
+        public Vector3 waitPos; //장애물이 대기 중일 때의 포지션 x,y,z
         public float appearWaitTime; //장애물이 나타날 때 대기 시간
         public float appearSpeed; //장애물이 나타나는 속도
         public float appearheight; //장애물이 나타날 때의 높이
-        public float[] objScale; //오브젝트 스케일 x, y, z
-        public float[] colPos; //충돌 콜라이더 포지션 x,y,z
-        public float[] colScale; //충돌 콜라이더 스케일 x, y, z
+        public Vector3 objScale; //오브젝트 스케일 x, y, z
+        public Vector3 colPos; //충돌 콜라이더 포지션 x,y,z
+        public Vector3 colScale; //충돌 콜라이더 스케일 x, y, z
         public int maxHealthPoint; //장애물의 최대 최력
         public int armor; //장애물의 방어력
         public int magicRegistant; //장애물의 마법 저항력
     }
     public Data[] rockObstacleData;
-    public const string basicfileName = "ObstacleData"; //파일 명 앞에 장애물의 종류 붙이기
-    public const string filePath = "C:/Users/yulop/RPGGame/BountyHunter/Assets/MapInfos/DungeonObstaclesKind"; //파일 경로
+    public string basicfileName{ //파일 명 앞에 장애물의 종류 붙이기
+        get{ return "ObstacleData"; }
+    }
+    public string filePath{ //파일 경로
+        get{ return "C:/Users/yulop/RPGGame/BountyHunter/Assets/MapInfos/DungeonObstaclesKind"; }
+    }
 
     
     private void Awake() {
