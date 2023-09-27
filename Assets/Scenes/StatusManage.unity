@@ -237,7 +237,7 @@ MonoBehaviour:
     appearSpeed: 0.05
     appearheight: 1
     objScale: {x: 1, y: 2, z: 1}
-    colPos: {x: 1, y: 1, z: 1}
+    colPos: {x: 0, y: 0, z: 0}
     colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 10
     armor: 10
@@ -249,7 +249,7 @@ MonoBehaviour:
     appearSpeed: 0.05
     appearheight: 1
     objScale: {x: 1, y: 1, z: 1}
-    colPos: {x: 1, y: 1, z: 1}
+    colPos: {x: 0, y: 0, z: 0}
     colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 15
     armor: 7
@@ -261,7 +261,7 @@ MonoBehaviour:
     appearSpeed: 0.05
     appearheight: 0.9
     objScale: {x: 1, y: 1, z: 1}
-    colPos: {x: 1, y: 1, z: 1}
+    colPos: {x: 0, y: 0, z: 0}
     colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 5
     armor: 20

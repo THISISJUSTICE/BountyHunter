@@ -278,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543787, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f363d29669c5fc140851514a42a53eff, type: 3}
@@ -745,7 +745,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RockDungeonStage:
   - {fileID: 4900000, guid: a5a0ac6545f725c499b690efd524108f, type: 3}
-  rockObstacles:
+  RockObstaclesData: {fileID: 4900000, guid: 209ccd9d91b3d564a905f9aa365d609e, type: 3}
+  rockObstaclePrefabs:
   - {fileID: 7946587218401312656, guid: cc60063e71dbfe5428c3160053f89a37, type: 3}
   - {fileID: 1795314740598185661, guid: 1b3047f8fd7cea44c838c6307dcc65d5, type: 3}
   - {fileID: 5121932360660543787, guid: f363d29669c5fc140851514a42a53eff, type: 3}

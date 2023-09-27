@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // 할 일
@@ -20,17 +21,25 @@ using UnityEngine;
 //장애물 위치 z(start + 10 ~ end-20), 세로 1칸 당 z: 5, 가로 1칸당 x: 1.6
 public class DungeonManager : MonoBehaviour
 {
+    #region Variable
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
-    public TextAsset[] RockDungeonStage; //바위맵 던전 스테이지 텍스트 파일
     List<DefineObstacles.Data> obstacleDatas; //장애물 종류에 따른 데이터
-
     Stack<GameObject>[] curObstacleObjects; //현재 맵에 맞는 풀리용 오브젝트
-    Stack<GameObject>[] rockObstacleObjects; //장애물 풀링용 오브젝트
-
     GameObject[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
+
+    Stack<GameObject>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
+
+    #region StageObstacles
+
+    public TextAsset[] RockDungeonStage; //바위맵 던전 스테이지 텍스트 파일
+    public TextAsset RockObstaclesData; //바위맵 장애물 정보 텍스트 파일
     public GameObject[] rockObstaclePrefabs; //장애물 프리팹 모음
+
+    #endregion
+
+    #endregion
 
     void Awake(){
         DungeonManagerInit();
@@ -41,10 +50,14 @@ public class DungeonManager : MonoBehaviour
         for(int i=0; i<rockObstacleObjects.Length; ++i) rockObstacleObjects[i] = new Stack<GameObject>();
     }
 
+    private void Start() {
+        DungeonStart("Rock", 0);
+    }
+
     //다른 스크립트에서 던전의 종류, 스테이지 레벨을 받아 던전 시작
     public void DungeonStart(string dungeonKind, int stageLevel){
          ReadStageFile(dungeonKind, stageLevel);
-         LoadDungeonObstacleData(dungeonKind);
+         obstacleDatas = LoadDungeonObstacleData(dungeonKind);
          CreateDungeon();
     }
 
@@ -94,9 +107,29 @@ public class DungeonManager : MonoBehaviour
     }
 
     //던전 종류에 따른 장애물 데이터 로드
-    void LoadDungeonObstacleData(string dungeonKind){
-        DefineObstacles deOb = new DefineObstacles();
-        obstacleDatas = deOb.LoadJsonFile<DefineObstacles.Data>(dungeonKind + deOb.filePath, deOb.basicfileName);
+    List<DefineObstacles.Data> LoadDungeonObstacleData(string dungeonKind){
+        TextAsset obda;
+        List<DefineObstacles.Data> jsonList = new List<DefineObstacles.Data>();
+
+        switch(dungeonKind){
+            case "Rock":
+                obda = RockObstaclesData;
+                break;
+            default:
+                obda = null;
+                break;
+        }
+
+        StringReader strRea = new StringReader(obda.text);
+        string line;
+        
+        while(strRea != null){
+            line = strRea.ReadLine();
+            if(line == null) break;
+            jsonList.Add(JsonUtility.FromJson<DefineObstacles.Data>(line));
+        }
+
+        return jsonList;
     }
 
     //텍스트 파일을 바탕으로 장애물 배치
@@ -105,9 +138,9 @@ public class DungeonManager : MonoBehaviour
         float x; //가로 (1칸당 1.6)
         float z = 10; //세로 (1칸당 10)
 
-        for(int i=0; i<dungeonLength; ++i, z+=10){
+        for(int i=0; i<dungeonInfo.Length; ++i, z+=10){
             x = 3.2f;
-            for(int j=0; j<dungeonWidth; ++j, x-=1.6f){
+            for(int j=0; j<dungeonInfo[0].Count; ++j, x-=1.6f){
                 if(dungeonInfo[i][j] == 99) continue;
                 CreateObstacle(dungeonInfo[i][j], x, z);
             }
@@ -125,7 +158,7 @@ public class DungeonManager : MonoBehaviour
             curob = Instantiate(curObstaclePrefabs[num]).GetComponent<ObstacleBasic>();
         }
         curob.ObstacleBasicInit(this, obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z));
-
+        Debug.Log("Create");
     }
 
     public void DeleteObstacle(ObstacleBasic obsB){

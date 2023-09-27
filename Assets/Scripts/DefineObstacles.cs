@@ -54,20 +54,5 @@ public class DefineObstacles : MonoBehaviour
         fileStream.Write(dataByte, 0, dataByte.Length);
         fileStream.Close();
     }
-
-    public List<Data> LoadJsonFile<T>(string loadPath, string fileName)
-    {
-        FileStream fileStream = new FileStream(string.Format("{0}/{1}.json", loadPath, fileName), FileMode.Open);
-        byte[] data = new byte[fileStream.Length];
-        fileStream.Read(data, 0, data.Length);
-        fileStream.Close();
-        string jsonData = Encoding.UTF8.GetString(data);
-        string[] lines = jsonData.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-        List<Data> jsonList = new List<Data>();
-        for(int i=0; i<lines.Length; ++i){
-            jsonList.Add(JsonUtility.FromJson<Data>(lines[i]));
-        }
-
-        return jsonList;
-    }
+    
 }
