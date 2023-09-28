@@ -139,8 +139,8 @@ public class DungeonManager : MonoBehaviour
     //텍스트 파일을 바탕으로 장애물 배치
     void CreateDungeon(){
         //장애물을 놓을 위치
-        float x; //가로 (1칸당 1.6)
-        float z = 10; //세로 (1칸당 10)
+        float x; //가로
+        float z = 10; //세로
 
         for(int i=0; i<dungeonInfo.Length; ++i, z+=floorVertical){
             x = 3.2f;

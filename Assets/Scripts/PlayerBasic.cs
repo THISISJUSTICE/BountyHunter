@@ -12,6 +12,7 @@ public class PlayerBasic : MonoBehaviour
     public int lrMoveFrame; //플레이어의 좌우 이동 프레임
     public int mapSpace = 5; // 맵의 좌우 칸 수(무조건 홀수)
     public PlayerStatus playerStatus; //플레이어 스테이터스
+    public GameObject weaponPos; //무기를 잡고 있는 위치
     
     protected int curHealthPoint; //플레이어 현재 체력
     protected int curMagicPoint; //플레이어 현재 마나
@@ -23,6 +24,9 @@ public class PlayerBasic : MonoBehaviour
     protected float rushTime; //돌진을 진행한 시간
     protected Animator anim;
     protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
+
+    protected delegate void skill(); //플레이어마다 가지고 있는 스킬 매개함수
+    protected bool isAttack; //현재 공격하고 있는지 확인
 
     #endregion
 
@@ -40,6 +44,7 @@ public class PlayerBasic : MonoBehaviour
         anim = transform.GetChild(0).GetComponent<Animator>();
         meshTransform = transform.GetChild(0).GetComponent<Transform>();
         rushTime = 0;
+        isAttack = false;
     }
 
     private void Start(){
@@ -70,6 +75,8 @@ public class PlayerBasic : MonoBehaviour
 
     //↑: 가속, ↓: 멈춤, →: 오른쪽으로 한 칸 이동, ←: 왼쪽으로 한 칸 이동
     protected void Move(){
+        if(isAttack) return;
+
         float hor = Input.GetAxisRaw("Horizontal");
         int lrTemp = lrIndex + (int)hor;
 
@@ -145,7 +152,7 @@ public class PlayerBasic : MonoBehaviour
     }
 
     //현재 좌우 이동 방향과 속도에 따라 플레이어 메쉬의 각도 변환(90, 45, 25)
-    void RotateWay(float animSpeed){
+    protected void RotateWay(float animSpeed){
         float rot;
         if(animSpeed < 0.5f) rot = 90;
         else if(animSpeed == 0.5f) rot = 40;
@@ -153,10 +160,38 @@ public class PlayerBasic : MonoBehaviour
         rot*=curMoveWay;
         meshTransform.localRotation = Quaternion.Euler(0, rot, 0);
     }
+
+    protected void Attack(skill[] skills){
+        if(isAttack) return;
+        if(Input.GetKeyDown(KeyCode.A)){
+            isAttack = true;
+            skills[0]();
+        }
+        else if(Input.GetKeyDown(KeyCode.Q)){
+            isAttack = true;
+            skills[1]();
+        }
+        else if(Input.GetKeyDown(KeyCode.W)){
+            isAttack = true;
+            skills[2]();
+        }
+        else if(Input.GetKeyDown(KeyCode.E)){
+            isAttack = true;
+            skills[3]();
+        }
+        else if(Input.GetKeyDown(KeyCode.R)){
+            isAttack = true;
+            skills[4]();
+        }
+    }
     
     #endregion
 
     private void OnCollisionEnter(Collision other) {
+        ObstacleCollisionCheck(other);
+    }
+
+    protected void ObstacleCollisionCheck(Collision other){
         //돌진 중 장애물과 부딪히면 데미지를 받거나 입음
         if(other.gameObject.tag == "Obstacle"){
             if(curSpeed == playerStatus.acceleration && rushTime > 0.8f){
