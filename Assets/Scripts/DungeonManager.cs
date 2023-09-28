@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -18,10 +19,12 @@ using UnityEngine;
 */
 
 //플로어 100 = 터레인 1000(+10 끝부분 막기), 플로어의 길이는 10의 배수
-//장애물 위치 z(start + 10 ~ end-20), 세로 1칸 당 z: 5, 가로 1칸당 x: 1.6
+//장애물 위치 z(start + 10 ~ end-20), 세로 1칸 당 z: 3.5, 가로 1칸당 x: 1.6
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
+    const float floorHorizontal = 1.6f; //가로 1칸 당 길이
+    const float floorVertical = 3.5f; //세로 1칸 당 길이
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
@@ -92,7 +95,7 @@ public class DungeonManager : MonoBehaviour
                 dungeonLength = int.Parse(line.Split(',')[0]);
                 dungeonWidth = int.Parse(line.Split(',')[1]);
 
-                dungeonInfo = new List<int>[(dungeonLength - 30) / 5]; //맵의 앞 뒤 끝 부분은 장애물 생성 X
+                dungeonInfo = new List<int>[(int)Math.Truncate((dungeonLength - 30) / floorVertical)]; //맵의 앞 뒤 끝 부분은 장애물 생성 X
                 for(int i=0; i<dungeonInfo.Length; ++i){
                     dungeonInfo[i] = new List<int>();
                 }
@@ -104,6 +107,7 @@ public class DungeonManager : MonoBehaviour
                 ++index;
             }
         }
+        Debug.Log("Lenght: " + dungeonInfo.Length);
     }
 
     //던전 종류에 따른 장애물 데이터 로드
@@ -138,9 +142,9 @@ public class DungeonManager : MonoBehaviour
         float x; //가로 (1칸당 1.6)
         float z = 10; //세로 (1칸당 10)
 
-        for(int i=0; i<dungeonInfo.Length; ++i, z+=10){
+        for(int i=0; i<dungeonInfo.Length; ++i, z+=floorVertical){
             x = 3.2f;
-            for(int j=0; j<dungeonInfo[0].Count; ++j, x-=1.6f){
+            for(int j=0; j<dungeonInfo[0].Count; ++j, x-=floorHorizontal){
                 if(dungeonInfo[i][j] == 99) continue;
                 CreateObstacle(dungeonInfo[i][j], x, z);
             }
@@ -158,7 +162,6 @@ public class DungeonManager : MonoBehaviour
             curob = Instantiate(curObstaclePrefabs[num]).GetComponent<ObstacleBasic>();
         }
         curob.ObstacleBasicInit(this, obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z));
-        Debug.Log("Create");
     }
 
     public void DeleteObstacle(ObstacleBasic obsB){
