@@ -92,6 +92,7 @@ MonoBehaviour:
     maxMagicPoint: 0
     attackDamage: 0
     magicDamage: 0
+  weaponPos: {fileID: 0}
 --- !u!1 &228410043673074826
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,6 +356,10 @@ PrefabInstance:
     - target: {fileID: 2130170232663345696, guid: 8a88837547515f545a7cbf0669236e2c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6191730749814182798, guid: 8a88837547515f545a7cbf0669236e2c, type: 3}
+      propertyPath: LightsModule.intensityCurve.scalar
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a88837547515f545a7cbf0669236e2c, type: 3}
