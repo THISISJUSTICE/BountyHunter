@@ -1,0 +1,7 @@
+Ammunition[[:space:]]pack[[:space:]](demo)/* filter=lfs diff=lfs merge=lfs -text
+FreeMachineGun filter=lfs diff=lfs merge=lfs -text
+Knife filter=lfs diff=lfs merge=lfs -text
+Knife/* filter=lfs diff=lfs merge=lfs -text
+FreeMachineGun/* filter=lfs diff=lfs merge=lfs -text
+PlayerGranade/* filter=lfs diff=lfs merge=lfs -text
+Sniper/* filter=lfs diff=lfs merge=lfs -text
