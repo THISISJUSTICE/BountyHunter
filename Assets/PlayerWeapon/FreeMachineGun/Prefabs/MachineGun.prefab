@@ -29,7 +29,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481424}
-  m_RootOrder: -1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8137824549207596377
 GameObject:
@@ -60,7 +60,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481424}
-  m_RootOrder: -1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &8137824550334519336
 GameObject:
@@ -92,7 +92,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481424}
-  m_RootOrder: -2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &8137824550348182840
 SkinnedMeshRenderer:
@@ -180,7 +180,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481426}
-  m_RootOrder: -2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 58.99611}
 --- !u!1 &8137824550334519340
 GameObject:
@@ -211,7 +211,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481426}
-  m_RootOrder: -2
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -13.082382, y: -1080, z: -1080}
 --- !u!1 &8137824550334519344
 GameObject:
@@ -224,7 +224,6 @@ GameObject:
   - component: {fileID: 8137824550334481424}
   - component: {fileID: 8137824550341345784}
   - component: {fileID: 8137824550344010744}
-  - component: {fileID: 8137824549068951760}
   m_Layer: 0
   m_Name: MachineGun
   m_TagString: Untagged
@@ -270,7 +269,7 @@ Animation:
   m_CullingType: 0
 --- !u!95 &8137824550344010744
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -287,27 +286,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8137824549068951760
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8137824550334519344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 066de8d856328c64889a737a66f95b5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bullet: {fileID: 7301374540111607195, guid: 9bbf319ba91b40a43a6a6861b1ea0128, type: 3}
-  bulletPos: {fileID: 8137824549207596374}
-  gunPos: {fileID: 8137824548459445645}
-  gunParticle: {fileID: 8137824550334519358}
-  fireRate: 0.1
-  reloadRate: 1.5
-  bulletCount: 50
-  bulletCharge: 10
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8137824550334519346
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,7 +321,7 @@ Transform:
   - {fileID: 8137824550334481420}
   - {fileID: 8137824550334481428}
   m_Father: {fileID: 8137824550334481430}
-  m_RootOrder: -2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8137824550334519348
 GameObject:
@@ -372,7 +352,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481426}
-  m_RootOrder: -2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -25.707571, y: -0.53219277, z: 1.2375844}
 --- !u!1 &8137824550334519350
 GameObject:
@@ -404,7 +384,7 @@ Transform:
   m_Children:
   - {fileID: 8137824550334481426}
   m_Father: {fileID: 8137824550334481424}
-  m_RootOrder: -2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8137824550334519352
 GameObject:
@@ -437,7 +417,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481438}
-  m_RootOrder: -2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &8137824550316130648
 ParticleSystem:
@@ -1007,7 +987,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    gravitySource: 0
     maxNumParticles: 3
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -4398,7 +4377,6 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
-    textureScale: {x: 1, y: 1}
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
@@ -5256,7 +5234,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481438}
-  m_RootOrder: -2
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &8137824550340597016
 Light:
@@ -5351,7 +5329,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8137824550334481438}
-  m_RootOrder: -2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &8137824550316130650
 ParticleSystem:
@@ -5921,7 +5899,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    gravitySource: 0
     maxNumParticles: 100
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -9312,7 +9289,6 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
-    textureScale: {x: 1, y: 1}
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
@@ -10174,7 +10150,7 @@ Transform:
   - {fileID: 8137824550334481436}
   - {fileID: 8137824550334481434}
   m_Father: {fileID: 8137824550334481426}
-  m_RootOrder: -2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &8137824550316130652
 ParticleSystem:
@@ -10744,7 +10720,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    gravitySource: 0
     maxNumParticles: 6
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -14135,7 +14110,6 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
-    textureScale: {x: 1, y: 1}
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0

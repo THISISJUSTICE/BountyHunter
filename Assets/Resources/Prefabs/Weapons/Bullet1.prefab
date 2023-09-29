@@ -11,11 +11,13 @@ GameObject:
   - component: {fileID: 4738416058690398}
   - component: {fileID: 33472196568393678}
   - component: {fileID: 23288869359682376}
-  - component: {fileID: 1886754687476480003}
   - component: {fileID: 8471790248706441900}
-  m_Layer: 0
+  - component: {fileID: 492790345841880442}
+  - component: {fileID: 7110949405425240080}
+  - component: {fileID: 8193023847268049908}
+  m_Layer: 7
   m_Name: Bullet1
-  m_TagString: Untagged
+  m_TagString: ChaserBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,11 +30,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1404200745246544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.0386}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 50}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 493027404591336057}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -86,18 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1886754687476480003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1404200745246544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77138c2fd505e1848a0b9cb075cc3ae4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!96 &8471790248706441900
 TrailRenderer:
   serializedVersion: 2
@@ -206,34 +195,50 @@ TrailRenderer:
   m_MinVertexDistance: 0
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!1 &8151937610699903361
-GameObject:
+--- !u!114 &492790345841880442
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 493027404591336057}
-  m_Layer: 0
-  m_Name: Bullet
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &493027404591336057
-Transform:
+  m_GameObject: {fileID: 1404200745246544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33310ece83fc81841bdcb9397041782b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletKind: 0
+  damage: 10
+  speed: 1
+  existTime: 0.5
+  rigid: {fileID: 0}
+--- !u!136 &7110949405425240080
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8151937610699903361}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00006056368, y: -0.00014672085, z: 0.0008438363}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.02}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4738416058690398}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1404200745246544}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.0001
+  m_Height: 0.0014
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.00019}
+--- !u!54 &8193023847268049908
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404200745246544}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0

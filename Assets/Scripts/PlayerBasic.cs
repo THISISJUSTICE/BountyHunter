@@ -164,23 +164,18 @@ public class PlayerBasic : MonoBehaviour
     protected void Attack(skill[] skills){
         if(isAttack) return;
         if(Input.GetKeyDown(KeyCode.A)){
-            isAttack = true;
             skills[0]();
         }
         else if(Input.GetKeyDown(KeyCode.Q)){
-            isAttack = true;
             skills[1]();
         }
         else if(Input.GetKeyDown(KeyCode.W)){
-            isAttack = true;
             skills[2]();
         }
         else if(Input.GetKeyDown(KeyCode.E)){
-            isAttack = true;
             skills[3]();
         }
         else if(Input.GetKeyDown(KeyCode.R)){
-            isAttack = true;
             skills[4]();
         }
     }

@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 7301374540043440580}
   - component: {fileID: 7301374540043440579}
   - component: {fileID: 7301374540043440578}
-  - component: {fileID: 7301374540043440583}
   m_Layer: 6
   m_Name: Bullet
   m_TagString: Bullet
@@ -90,7 +89,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!95 &7301374540121081435
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -107,7 +106,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!54 &7301374540043440580
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -139,7 +139,7 @@ BoxCollider:
   m_Center: {x: -0.0024999997, y: 0, z: 0.053289957}
 --- !u!96 &7301374540043440578
 TrailRenderer:
-  serializedVersion: 3
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -240,26 +240,8 @@ TrailRenderer:
     numCapVertices: 0
     alignment: 0
     textureMode: 0
-    textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0
-  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
-  m_ApplyActiveColorSpace: 1
---- !u!114 &7301374540043440583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7301374540111607195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172c14223c328a744bf441ae8c53c082, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dmg: 0
-  speed: 110
-  existTime: 10
