@@ -18,11 +18,18 @@ public class GunBullet : MonoBehaviour
 
     public void BulletInit(SoldierGun parent){
         this.parent = parent;
+        StartCoroutine(WaitTime());
     }
 
-    //일정 시간이 지나면 총알이 사라짐
-    IEnumerator Disappear(){
+
+    //생성하고 일정 시간 대기
+    IEnumerator WaitTime(){
         yield return new WaitForSeconds(existTime);
+        Disappear();
+    }
+
+    //총알 삭제
+    public void Disappear(){
         parent.BulletDisappear(this, bulletKind);
     }
 }

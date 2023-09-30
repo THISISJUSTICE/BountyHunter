@@ -15,3 +15,15 @@ public class PlayerStatus:Status{
     public int attackDamage; //플레이어 공격력
     public int magicDamage; //플레이어 마법공격력
 }
+
+public class PlayData{
+    public string nickname; //플레이어 닉네임
+    PlayerStatus playerStatus;
+    //각종 퀘스트, 행적
+}
+
+public class UserData{
+    public string id;
+    public string password;
+    PlayData playData;
+}

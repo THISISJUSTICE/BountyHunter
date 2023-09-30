@@ -9,7 +9,6 @@ public class SoldierGun : MonoBehaviour
     public float fireRate; //발사 대기 시간
     public float reloadRate; //장전 속도
     public int maxBulletCount; //탄창 당 총알 갯수
-    bool cooldown;
 
     ParticleSystem fireEffect; //발사 이펙트
     public GunBullet[] bulletPrefabs; //총알 오브젝트 (다양한 총알)
@@ -20,7 +19,6 @@ public class SoldierGun : MonoBehaviour
     Animator anim;
 
     private void Awake() {
-        cooldown = false;
         anim = GetComponent<Animator>();
         fireEffect = transform.GetChild(0).GetComponent<ParticleSystem>();
         bulletObjects = new Stack<GunBullet>[bulletPrefabs.Length];
@@ -31,12 +29,9 @@ public class SoldierGun : MonoBehaviour
 
     //발사
     public void Shoot(int bulletKind){
-        if(cooldown) return;
-        cooldown = true;
         anim.Play("Shoot");
         fireEffect.Play();
         CreateBullet(bulletKind);
-        StartCoroutine(Cooldown());
     }
 
     //총알 생성
@@ -48,12 +43,8 @@ public class SoldierGun : MonoBehaviour
         else{
             bullet = bulletObjects[bulletKind].Pop();
         }
-    }
-
-    //대기 시간
-    IEnumerator Cooldown(){
-        yield return new WaitForSeconds(fireRate);
-        cooldown = false;
+        Rigidbody bulletRigid = bullet.rigid;
+        bulletRigid.AddForce(Vector3.forward * bullet.speed, ForceMode.Impulse);
     }
 
     //장전

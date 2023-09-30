@@ -209,7 +209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletKind: 0
   damage: 10
-  speed: 1
+  speed: 50
   existTime: 0.5
   rigid: {fileID: 0}
 --- !u!136 &7110949405425240080
@@ -220,7 +220,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1404200745246544}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.0001
   m_Height: 0.0014

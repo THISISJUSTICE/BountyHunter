@@ -26,7 +26,8 @@ public class PlayerBasic : MonoBehaviour
     protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
 
     protected delegate void skill(); //플레이어마다 가지고 있는 스킬 매개함수
-    protected bool isAttack; //현재 공격하고 있는지 확인
+    protected bool noMove; //이동 불가
+    protected bool noLRMove; //좌우 이동 불가
 
     #endregion
 
@@ -44,7 +45,8 @@ public class PlayerBasic : MonoBehaviour
         anim = transform.GetChild(0).GetComponent<Animator>();
         meshTransform = transform.GetChild(0).GetComponent<Transform>();
         rushTime = 0;
-        isAttack = false;
+        noMove = false;
+        noLRMove = false;
     }
 
     private void Start(){
@@ -75,7 +77,7 @@ public class PlayerBasic : MonoBehaviour
 
     //↑: 가속, ↓: 멈춤, →: 오른쪽으로 한 칸 이동, ←: 왼쪽으로 한 칸 이동
     protected void Move(){
-        if(isAttack) return;
+        if(noMove) return;
 
         float hor = Input.GetAxisRaw("Horizontal");
         int lrTemp = lrIndex + (int)hor;
@@ -95,6 +97,7 @@ public class PlayerBasic : MonoBehaviour
         }
         gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed);
 
+        if(noLRMove) return;
         //좌우 이동
         if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && curMoveWay == 0){
             if(!ObstacleLRCheck(lrIndex, lrTemp)){
@@ -162,8 +165,8 @@ public class PlayerBasic : MonoBehaviour
     }
 
     protected void Attack(skill[] skills){
-        if(isAttack) return;
         if(Input.GetKeyDown(KeyCode.A)){
+            Debug.Log("Down A");
             skills[0]();
         }
         else if(Input.GetKeyDown(KeyCode.Q)){
