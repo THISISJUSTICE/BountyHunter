@@ -7,6 +7,7 @@ public class ChaserSoldier : PlayerBasic
 {
     skill[] skills;
     int curWeapon; //현재 들고 있는 무기를 확인(0: Q(권총), 1: W(소총, 기관총), 2: E(저격총, 샷건), 3: R(수류탄, 폭탄))
+    SoldierGun[] havingWeapons; //현재 가지고 있는 무기
 
     private void Awake() {
         PlayerBasicInit();
@@ -20,11 +21,20 @@ public class ChaserSoldier : PlayerBasic
         skills[2] = new skill(NormalAttack);
         skills[3] = new skill(NormalAttack);
         skills[4] = new skill(NormalAttack);
+        havingWeapons = new SoldierGun[5];
     }
 
     private void Start()
     {
         LRInit();
+    }
+
+    void SoldierInit(){
+        havingWeapons[0] = weaponPos.GetChild(0).GetChild(0).GetComponent<SoldierGun>();
+        havingWeapons[1] = weaponPos.GetChild(1).GetChild(0).GetComponent<SoldierGun>();
+        havingWeapons[2] = weaponPos.GetChild(2).GetChild(0).GetComponent<SoldierGun>();
+        havingWeapons[3] = weaponPos.GetChild(3).GetChild(0).GetComponent<SoldierGun>();
+        havingWeapons[4] = weaponPos.GetChild(4).GetChild(0).GetComponent<SoldierGun>();
     }
 
     private void FixedUpdate() {
@@ -54,6 +64,7 @@ public class ChaserSoldier : PlayerBasic
             case 3: //수류탄
                 break;
         }
+        curWeapon = weaponKind;
     }
 
     //탄창 장전

@@ -12,7 +12,7 @@ public class PlayerBasic : MonoBehaviour
     public int lrMoveFrame; //플레이어의 좌우 이동 프레임
     public int mapSpace = 5; // 맵의 좌우 칸 수(무조건 홀수)
     public PlayerStatus playerStatus; //플레이어 스테이터스
-    public GameObject weaponPos; //무기를 잡고 있는 위치
+    public Transform weaponPos; //무기를 잡고 있는 위치
     
     protected int curHealthPoint; //플레이어 현재 체력
     protected int curMagicPoint; //플레이어 현재 마나

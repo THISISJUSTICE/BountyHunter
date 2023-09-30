@@ -92,7 +92,7 @@ MonoBehaviour:
     maxMagicPoint: 0
     attackDamage: 0
     magicDamage: 0
-  weaponPos: {fileID: 7599966725327743263}
+  weaponPos: {fileID: 3988494901219169820}
 --- !u!1 &228410043673074826
 GameObject:
   m_ObjectHideFlags: 0
