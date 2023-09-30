@@ -29,29 +29,17 @@ public class DungeonManager : MonoBehaviour
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
     List<DefineObstacles.Data> obstacleDatas; //장애물 종류에 따른 데이터
-    Stack<GameObject>[] curObstacleObjects; //현재 맵에 맞는 풀리용 오브젝트
-    GameObject[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
-
-    Stack<GameObject>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
+    Stack<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
+    ObstacleBasic[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
 
     #region StageObstacles
 
     public TextAsset[] RockDungeonStage; //바위맵 던전 스테이지 텍스트 파일
     public TextAsset RockObstaclesData; //바위맵 장애물 정보 텍스트 파일
-    public GameObject[] rockObstaclePrefabs; //장애물 프리팹 모음
 
     #endregion
 
     #endregion
-
-    void Awake(){
-        DungeonManagerInit();
-    }
-
-    void DungeonManagerInit(){
-        rockObstacleObjects = new Stack<GameObject>[rockObstaclePrefabs.Length]; //프리팹 수 만큼 생성
-        for(int i=0; i<rockObstacleObjects.Length; ++i) rockObstacleObjects[i] = new Stack<GameObject>();
-    }
 
     private void Start() {
         DungeonStart("Rock", 0);
@@ -71,8 +59,8 @@ public class DungeonManager : MonoBehaviour
         switch(dungeonKind){
             case "Rock":
                 txtFile = RockDungeonStage[stageLevel];
-                curObstaclePrefabs = rockObstaclePrefabs;
-                curObstacleObjects = rockObstacleObjects;
+                curObstaclePrefabs = ObjectManager.Instace.dungeonObjects.rockObstaclePrefabs;
+                curObstacleObjects = ObjectManager.Instace.dungeonObjects.rockObstacleObjects;
                 break;
             default:
                 txtFile = null;
@@ -156,16 +144,27 @@ public class DungeonManager : MonoBehaviour
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
-            curob = curObstacleObjects[num].Pop().GetComponent<ObstacleBasic>();
+            curob = curObstacleObjects[num].Pop();
         }
         else{ 
-            curob = Instantiate(curObstaclePrefabs[num]).GetComponent<ObstacleBasic>();
+            curob = Instantiate(curObstaclePrefabs[num]);
         }
         curob.ObstacleBasicInit(this, obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z));
     }
 
-    public void DeleteObstacle(ObstacleBasic obsB){
+    public void DeleteObstacle(ObstacleBasic obsB, int kind){
+        curObstacleObjects[kind].Push(obsB);
+        obsB.gameObject.SetActive(false);
+    }
 
+    public void DungeonEnd(string dungeonKind){
+        switch(dungeonKind){
+            case "Rock":
+                ObjectManager.Instace.dungeonObjects.rockObstacleObjects = curObstacleObjects;
+                break;
+            default:
+                break;
+        }
     }
 
 }
