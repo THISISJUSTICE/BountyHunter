@@ -1086,5 +1086,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chaser1
       objectReference: {fileID: 0}
+    - target: {fileID: 3302696721749140335, guid: 5aec50aa6c8d58e48bc86f174cbff894, type: 3}
+      propertyPath: playerStatus.armor
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5aec50aa6c8d58e48bc86f174cbff894, type: 3}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
@@ -39,8 +40,8 @@ public class ObstacleBasic : MonoBehaviour
         transform.localScale = deObData.objScale;
         obstacleColi.center = deObData.colPos;
         obstacleColi.size = deObData.colScale;
+        //OnCollisionEnter onCollisionEnter = new OnCollisionEnter();
         
-
         //스테이터스 입력
         obstacleStatus.maxHealthPoint = deObData.maxHealthPoint;
         obstacleStatus.armor = deObData.armor;

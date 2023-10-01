@@ -26,6 +26,7 @@ public class PlayerBasic : MonoBehaviour
     protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
 
     protected delegate void skill(); //플레이어마다 가지고 있는 스킬 매개함수
+    protected float slowDown; //슬로우 효과를 받을 때 감소비율
     public bool noMove; //이동 불가
     public bool noLRMove; //좌우 이동 불가
 
@@ -45,6 +46,7 @@ public class PlayerBasic : MonoBehaviour
         anim = transform.GetChild(0).GetComponent<Animator>();
         meshTransform = transform.GetChild(0).GetComponent<Transform>();
         rushTime = 0;
+        slowDown = 1;
         noMove = false;
         noLRMove = false;
     }
@@ -81,13 +83,11 @@ public class PlayerBasic : MonoBehaviour
 
         float hor = Input.GetAxisRaw("Horizontal");
         int lrTemp = lrIndex + (int)hor;
-        bool check = false;;
 
         //이동 및 가속
         if(!Input.GetKey(KeyCode.DownArrow) && !ObstacleFCheck()){
             curSpeed = playerStatus.speed;
             if(Input.GetKey(KeyCode.UpArrow)){
-                check = true;
                 curSpeed = playerStatus.acceleration;
                 rushTime += 0.02f;
             }
@@ -97,8 +97,7 @@ public class PlayerBasic : MonoBehaviour
             curSpeed = 0;
             rushTime = 0;
         }
-        gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed);
-        Debug.Log($"Up: {check}, obccheck: {ObstacleFCheck()}");
+        gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed * slowDown);
 
         if(noLRMove) return;
         //좌우 이동
@@ -199,15 +198,25 @@ public class PlayerBasic : MonoBehaviour
                 rushTime = 0;
                 ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
                 obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
+                StartCoroutine(BeSlowed(0.1f, 0.4f));
                 RushDamaged(obstacleBasic.obstacleStatus.armor);
             }
         }
     }
 
+    //슬로우 효과를 당했을 때
+    public IEnumerator BeSlowed(float time, float rate){
+        slowDown = rate;
+        yield return new WaitForSeconds(time);
+        slowDown = 1;
+    }
+
+    //돌진 시 입는 데미지
     protected void RushDamaged(int armor){
 
     }
 
+    //체력 감소
     protected void HPDecrese(int dmg){
 
     }
