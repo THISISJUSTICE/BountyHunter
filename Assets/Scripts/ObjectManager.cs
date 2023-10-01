@@ -30,9 +30,9 @@ public class ObjectManager : MonoBehaviour
         public ObstacleBasic[] rockObstaclePrefabs; //바위맵 장애물 프리팹 모음
         public Stack<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
 
-        public DungeonObjects(){
-            //rockObstacleObjects = new Stack<ObstacleBasic>[rockObstaclePrefabs.Length];
-            rockObstacleObjects = new Stack<ObstacleBasic>[5];
+        public void Init(){
+            rockObstaclePrefabs = Resources.LoadAll<ObstacleBasic>("Prefabs/Obstacles/RockDungeonObstacles");
+            rockObstacleObjects = new Stack<ObstacleBasic>[rockObstaclePrefabs.Length];
             for(int i=0; i<rockObstacleObjects.Length; ++i){
                 rockObstacleObjects[i] = new Stack<ObstacleBasic>();
             }
@@ -47,24 +47,27 @@ public class ObjectManager : MonoBehaviour
         public GunBullet[] bulletPrefabs; //총알 프리팹 모음 (다양한 총알)
         public Stack<GunBullet>[] bulletObjects; //총알 풀랑용 오브젝트
 
-        public PlayerObjects(){
-            //bulletObjects = new Stack<GunBullet>[bulletPrefabs.Length];
-            bulletObjects = new Stack<GunBullet>[1];
+        public void Init(){
+            pistolPrefabs = Resources.LoadAll<SoldierGun>("Prefabs/Weapons/Soldier_Weapon/Pistols");
+            pistolObjects = new Stack<SoldierGun>[pistolPrefabs.Length];
+            for(int i=0; i<pistolObjects.Length; ++i){
+                pistolObjects[i] = new Stack<SoldierGun>();
+            }
+
+            bulletPrefabs = Resources.LoadAll<GunBullet>("Prefabs/Weapons/Soldier_Weapon/Bullets");
+            bulletObjects = new Stack<GunBullet>[bulletPrefabs.Length];
             for(int i=0; i<bulletObjects.Length; ++i){
                 bulletObjects[i] = new Stack<GunBullet>();
-            }
-            //pistolObjects = new Stack<SoldierGun>[pistolPrefabs.Length];
-            pistolObjects = new Stack<SoldierGun>[1];
-            for(int i=0; i<bulletObjects.Length; ++i){
-                pistolObjects[i] = new Stack<SoldierGun>();
             }
         }
     }
     public PlayerObjects playerObjects;
 
     void ObjectInit(){
-        Instace.dungeonObjects = new DungeonObjects();
-        Instace.playerObjects = new PlayerObjects();
+        dungeonObjects = new DungeonObjects();
+        dungeonObjects.Init();
+        playerObjects = new PlayerObjects();
+        playerObjects.Init();
     }
 
     private void Awake() {

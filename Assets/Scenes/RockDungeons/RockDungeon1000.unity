@@ -153,17 +153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonObjects:
-    rockObstaclePrefabs:
-    - {fileID: 7946587218401312657, guid: cc60063e71dbfe5428c3160053f89a37, type: 3}
-    - {fileID: 1795314740598185662, guid: 1b3047f8fd7cea44c838c6307dcc65d5, type: 3}
-    - {fileID: 5121932360660543786, guid: f363d29669c5fc140851514a42a53eff, type: 3}
-    - {fileID: 1889113663095710432, guid: 8a0592a305f610f409d5ceb153c86781, type: 3}
-    - {fileID: 5058994934139817590, guid: b98276212bc97784682216795f79917c, type: 3}
+    rockObstaclePrefabs: []
   playerObjects:
-    pistolPrefabs:
-    - {fileID: 7766258639313455303, guid: 8a88837547515f545a7cbf0669236e2c, type: 3}
-    bulletPrefabs:
-    - {fileID: 492790345841880442, guid: 068381675912eb044a912de01e17f9cd, type: 3}
+    pistolPrefabs: []
+    bulletPrefabs: []
 --- !u!4 &135050645
 Transform:
   m_ObjectHideFlags: 0

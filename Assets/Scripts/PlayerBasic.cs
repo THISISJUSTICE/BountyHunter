@@ -26,8 +26,8 @@ public class PlayerBasic : MonoBehaviour
     protected Transform meshTransform; //플레이어 메쉬의 트랜스폼
 
     protected delegate void skill(); //플레이어마다 가지고 있는 스킬 매개함수
-    protected bool noMove; //이동 불가
-    protected bool noLRMove; //좌우 이동 불가
+    public bool noMove; //이동 불가
+    public bool noLRMove; //좌우 이동 불가
 
     #endregion
 
@@ -81,11 +81,13 @@ public class PlayerBasic : MonoBehaviour
 
         float hor = Input.GetAxisRaw("Horizontal");
         int lrTemp = lrIndex + (int)hor;
+        bool check = false;;
 
         //이동 및 가속
         if(!Input.GetKey(KeyCode.DownArrow) && !ObstacleFCheck()){
             curSpeed = playerStatus.speed;
             if(Input.GetKey(KeyCode.UpArrow)){
+                check = true;
                 curSpeed = playerStatus.acceleration;
                 rushTime += 0.02f;
             }
@@ -96,6 +98,7 @@ public class PlayerBasic : MonoBehaviour
             rushTime = 0;
         }
         gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed);
+        Debug.Log($"Up: {check}, obccheck: {ObstacleFCheck()}");
 
         if(noLRMove) return;
         //좌우 이동
@@ -122,7 +125,7 @@ public class PlayerBasic : MonoBehaviour
 
     //전방이 막혀 있는지 확인
     protected bool ObstacleFCheck(){
-        if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, 
+        if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.5f, 
         transform.forward, out RaycastHit hit, transform.rotation, 0.5f)){
             if((hit.collider.tag == "Obstacle" && rushTime <= 0.8f) || hit.collider.tag == "Background") {
                 return true;
