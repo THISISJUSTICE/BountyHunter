@@ -75,8 +75,4 @@ public class ObjectManager : MonoBehaviour
         ObjectInit();
     }
 
-    private void Start() {
-        
-    }
-
 }

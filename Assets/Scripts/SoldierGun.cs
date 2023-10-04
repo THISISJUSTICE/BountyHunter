@@ -31,14 +31,18 @@ public class SoldierGun : MonoBehaviour
     //총알 생성
     void CreateBullet(int bulletKind){
         GunBullet bullet;
-        if(ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Count == 0){
-            bullet = Instantiate(ObjectManager.Instace.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
+        if(ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Count > 0){
+            bullet = ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Pop();
+            bullet.gameObject.SetActive(true);
+            bullet.transform.position = bulletPos.position;
         }
         else{
-            bullet = ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Pop();
+            bullet = Instantiate(ObjectManager.Instace.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
         }
         Rigidbody bulletRigid = bullet.rigid;
-        bulletRigid.AddForce(Vector3.forward * bullet.speed, ForceMode.Impulse);
+        bullet.BulletInit();
+        bulletRigid.velocity = Vector3.zero;
+        bulletRigid.velocity = Vector3.forward * bullet.speed;
     }
 
     //장전

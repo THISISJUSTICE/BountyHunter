@@ -145,6 +145,7 @@ public class DungeonManager : MonoBehaviour
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
             curob = curObstacleObjects[num].Pop();
+            curob.gameObject.SetActive(true);
         }
         else{ 
             curob = Instantiate(curObstaclePrefabs[num]);

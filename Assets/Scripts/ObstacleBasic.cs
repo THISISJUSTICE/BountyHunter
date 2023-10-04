@@ -74,6 +74,11 @@ public class ObstacleBasic : MonoBehaviour
         }
     }
 
+    //피격당했을 때 실행
+    public void AttackDamaged(int damage){
+        Debug.Log("DamagedEffect Check");
+    }
+
     //공격 시 받는 데미지 계산
     public void AttackDamaged(int attackDamage, int magicDamage){
 

@@ -171,16 +171,16 @@ public class PlayerBasic : MonoBehaviour
             Debug.Log("Down A");
             skills[0]();
         }
-        else if(Input.GetKeyDown(KeyCode.Q)){
+        if(Input.GetKeyDown(KeyCode.Q)){
             skills[1]();
         }
-        else if(Input.GetKeyDown(KeyCode.W)){
+        if(Input.GetKeyDown(KeyCode.W)){
             skills[2]();
         }
-        else if(Input.GetKeyDown(KeyCode.E)){
+        if(Input.GetKeyDown(KeyCode.E)){
             skills[3]();
         }
-        else if(Input.GetKeyDown(KeyCode.R)){
+        if(Input.GetKeyDown(KeyCode.R)){
             skills[4]();
         }
     }

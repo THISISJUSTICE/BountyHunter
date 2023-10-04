@@ -8,16 +8,13 @@ public class GunBullet : MonoBehaviour
     public int damage; //피해량
     public float speed; //총알 이동 속도
     public float existTime; //총알이 존재하는 시간
-
-    SoldierGun parent; //총알을 발사한 총
     public Rigidbody rigid;
 
     private void Awake() {
         rigid = GetComponent<Rigidbody>();
     }
 
-    public void BulletInit(SoldierGun parent){
-        this.parent = parent;
+    public void BulletInit(){
         StartCoroutine(WaitTime());
     }
 
@@ -30,6 +27,15 @@ public class GunBullet : MonoBehaviour
 
     //총알 삭제
     public void Disappear(){
-        parent.BulletDisappear(this, bulletKind);
+        ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Push(this);
+        gameObject.SetActive(false);
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        if(other.transform.tag == "Obstacle"){
+            other.transform.GetComponentInParent<ObstacleBasic>().AttackDamaged(damage);
+        }
+        Disappear();
+        
     }
 }
