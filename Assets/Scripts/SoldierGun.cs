@@ -33,12 +33,12 @@ public class SoldierGun : MonoBehaviour
         GunBullet bullet;
         if(ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Count > 0){
             bullet = ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Pop();
-            bullet.gameObject.SetActive(true);
             bullet.transform.position = bulletPos.position;
         }
         else{
             bullet = Instantiate(ObjectManager.Instace.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
         }
+        bullet.gameObject.SetActive(true);
         Rigidbody bulletRigid = bullet.rigid;
         bullet.BulletInit();
         bulletRigid.velocity = Vector3.zero;
@@ -50,8 +50,4 @@ public class SoldierGun : MonoBehaviour
 
     }
 
-    public void BulletDisappear(GunBullet bullet, int bulletKind){
-        ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Push(bullet);
-        bullet.gameObject.SetActive(false);
-    }
 }

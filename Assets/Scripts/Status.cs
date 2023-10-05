@@ -1,9 +1,17 @@
+using UnityEngine;
+
 [System.Serializable]
 public class Status
 {
     public int maxHealthPoint; //최대 체력
     public int armor; //방어력
     public int magicRegistant; //마법저항력
+
+    //받는 피해량 계산
+    public int CalculateDamage(int attackDamage, int magicDamage){
+        int dmg = (int)Mathf.Ceil((float)attackDamage/armor) + (int)Mathf.Ceil((float)magicDamage/magicRegistant);
+        return dmg * 5;
+    }
 }
 
 [System.Serializable]

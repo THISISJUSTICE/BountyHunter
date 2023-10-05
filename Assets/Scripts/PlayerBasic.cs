@@ -167,20 +167,19 @@ public class PlayerBasic : MonoBehaviour
     }
 
     protected void Attack(skill[] skills){
-        if(Input.GetKeyDown(KeyCode.A)){
-            Debug.Log("Down A");
+        if(Input.GetKey(KeyCode.A)){
             skills[0]();
         }
-        if(Input.GetKeyDown(KeyCode.Q)){
+        if(Input.GetKey(KeyCode.Q)){
             skills[1]();
         }
-        if(Input.GetKeyDown(KeyCode.W)){
+        if(Input.GetKey(KeyCode.W)){
             skills[2]();
         }
-        if(Input.GetKeyDown(KeyCode.E)){
+        if(Input.GetKey(KeyCode.E)){
             skills[3]();
         }
-        if(Input.GetKeyDown(KeyCode.R)){
+        if(Input.GetKey (KeyCode.R)){
             skills[4]();
         }
     }

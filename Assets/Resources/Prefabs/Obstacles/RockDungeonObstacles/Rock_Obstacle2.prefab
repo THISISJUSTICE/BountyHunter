@@ -161,6 +161,7 @@ MonoBehaviour:
   appearSpeed: 0.05
   appearWaitTime: 0
   appearFrame: 20
+  hpDecreseRate: 10
   obstacleStatus:
     maxHealthPoint: 2
     armor: 5

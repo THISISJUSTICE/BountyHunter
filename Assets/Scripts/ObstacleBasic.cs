@@ -12,12 +12,14 @@ public class ObstacleBasic : MonoBehaviour
     public float appearSpeed; //장애물이 나타나는 속도
     public float appearWaitTime; //장애물이 나타날 때 대기 시간
     public int appearFrame; //장애물이 나타나는 프레임
+    public int hpDecreseRate; //장애물의 체력을 특정 비율로 나누기
     bool isAppear; //장애물이 등장했는지 확인
     BoxCollider obstacleColi; //장애물의 충돌
 
     public Status obstacleStatus; //장애물 스테이터스
     
     int curHealthPoint; //장애물 현재 체력
+    int curHPDecreseIndex; //장애물 현재 체력의 남은 비율
     MeshRenderer meshRenderer;
     DungeonManager dungeonManager;
     private void Awake() {
@@ -31,6 +33,7 @@ public class ObstacleBasic : MonoBehaviour
         meshRenderer.enabled = false;
         this.dungeonManager = dungeonManager;
         this.appearPos = appearPos;
+        curHPDecreseIndex = 1;
 
         //장애물 데이터 입력
         waitPos = new Vector3(appearPos.x + deObData.waitPos.x, deObData.waitPos.y, appearPos.z + deObData.waitPos.z);
@@ -74,25 +77,36 @@ public class ObstacleBasic : MonoBehaviour
         }
     }
 
-    //피격당했을 때 실행
-    public void AttackDamaged(int damage){
-        Debug.Log("DamagedEffect Check");
+    //피해를 받을 때 실행
+    public void Attacked(int attackDamage, int magicDamage){
+        int dmg = obstacleStatus.CalculateDamage(attackDamage, magicDamage);
+        if(dmg > 0){
+            HPDecrese(dmg);
+        }
     }
 
-    //공격 시 받는 데미지 계산
-    public void AttackDamaged(int attackDamage, int magicDamage){
-
+    //피해를 입었을 때 효과
+    void DamagedEffect(){
+        Debug.Log("데미지 이펙트");
     }
 
     //받은 데미지를 바탕으로 체력 감소
     void HPDecrese(int dmg){
         curHealthPoint -= dmg;
+        if(curHealthPoint <= obstacleStatus.maxHealthPoint / hpDecreseRate * (hpDecreseRate - curHPDecreseIndex)){
+            DamagedEffect();
+            curHPDecreseIndex = hpDecreseRate - (curHealthPoint * hpDecreseRate / obstacleStatus.maxHealthPoint);
+        }
         if(curHealthPoint <= 0) Death();
     }
 
     //체력이 0이 되어 파괴
     void Death(){
-        Debug.Log("장애물 파괴");
+        DestroyEffect();
         gameObject.SetActive(false);
+    }
+
+    void DestroyEffect(){
+
     }
 }
