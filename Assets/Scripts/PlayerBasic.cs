@@ -167,6 +167,7 @@ public class PlayerBasic : MonoBehaviour
     }
 
     protected void Attack(skill[] skills){
+        if(curMoveWay != 0) return;
         if(Input.GetKey(KeyCode.A)){
             skills[0]();
         }

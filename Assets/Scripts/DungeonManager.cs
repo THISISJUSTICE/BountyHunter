@@ -29,7 +29,7 @@ public class DungeonManager : MonoBehaviour
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
     List<DefineObstacles.Data> obstacleDatas; //장애물 종류에 따른 데이터
-    Stack<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
+    Queue<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
     ObstacleBasic[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
 
     #region StageObstacles
@@ -59,8 +59,8 @@ public class DungeonManager : MonoBehaviour
         switch(dungeonKind){
             case "Rock":
                 txtFile = RockDungeonStage[stageLevel];
-                curObstaclePrefabs = ObjectManager.Instace.dungeonObjects.rockObstaclePrefabs;
-                curObstacleObjects = ObjectManager.Instace.dungeonObjects.rockObstacleObjects;
+                curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.rockObstaclePrefabs;
+                curObstacleObjects = ObjectManager.Instance.dungeonObjects.rockObstacleObjects;
                 break;
             default:
                 txtFile = null;
@@ -144,7 +144,7 @@ public class DungeonManager : MonoBehaviour
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
-            curob = curObstacleObjects[num].Pop();
+            curob = curObstacleObjects[num].Dequeue();
             curob.gameObject.SetActive(true);
         }
         else{ 
@@ -154,14 +154,14 @@ public class DungeonManager : MonoBehaviour
     }
 
     public void DeleteObstacle(ObstacleBasic obsB, int kind){
-        curObstacleObjects[kind].Push(obsB);
+        curObstacleObjects[kind].Enqueue(obsB);
         obsB.gameObject.SetActive(false);
     }
 
     public void DungeonEnd(string dungeonKind){
         switch(dungeonKind){
             case "Rock":
-                ObjectManager.Instace.dungeonObjects.rockObstacleObjects = curObstacleObjects;
+                ObjectManager.Instance.dungeonObjects.rockObstacleObjects = curObstacleObjects;
                 break;
             default:
                 break;

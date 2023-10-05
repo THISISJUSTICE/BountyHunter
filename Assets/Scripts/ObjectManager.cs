@@ -18,7 +18,7 @@ public class ObjectManager : MonoBehaviour
         else Destroy(this.gameObject);
     }
 
-    public static ObjectManager Instace{
+    public static ObjectManager Instance{
         get{
             return instance;
         }
@@ -28,13 +28,13 @@ public class ObjectManager : MonoBehaviour
     [System.Serializable]
     public class DungeonObjects{ //던전의 장애물 오브젝트 모음
         public ObstacleBasic[] rockObstaclePrefabs; //바위맵 장애물 프리팹 모음
-        public Stack<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
+        public Queue<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
 
         public void Init(){
             rockObstaclePrefabs = Resources.LoadAll<ObstacleBasic>("Prefabs/Obstacles/RockDungeonObstacles");
-            rockObstacleObjects = new Stack<ObstacleBasic>[rockObstaclePrefabs.Length];
+            rockObstacleObjects = new Queue<ObstacleBasic>[rockObstaclePrefabs.Length];
             for(int i=0; i<rockObstacleObjects.Length; ++i){
-                rockObstacleObjects[i] = new Stack<ObstacleBasic>();
+                rockObstacleObjects[i] = new Queue<ObstacleBasic>();
             }
         }
     }
@@ -43,21 +43,21 @@ public class ObjectManager : MonoBehaviour
     [System.Serializable]
     public class PlayerObjects{ //플레이어 총알, 무기 등의 오브젝트 모음
         public SoldierGun[] pistolPrefabs; //군인 총 프리팹 모음
-        public Stack<SoldierGun>[] pistolObjects; //군인 총 풀리용 오브젝트
+        public Queue<SoldierGun>[] pistolObjects; //군인 총 풀리용 오브젝트
         public GunBullet[] bulletPrefabs; //총알 프리팹 모음 (다양한 총알)
-        public Stack<GunBullet>[] bulletObjects; //총알 풀랑용 오브젝트
+        public Queue<GunBullet>[] bulletObjects; //총알 풀랑용 오브젝트
 
         public void Init(){
             pistolPrefabs = Resources.LoadAll<SoldierGun>("Prefabs/Weapons/Soldier_Weapon/Pistols");
-            pistolObjects = new Stack<SoldierGun>[pistolPrefabs.Length];
+            pistolObjects = new Queue<SoldierGun>[pistolPrefabs.Length];
             for(int i=0; i<pistolObjects.Length; ++i){
-                pistolObjects[i] = new Stack<SoldierGun>();
+                pistolObjects[i] = new Queue<SoldierGun>();
             }
 
             bulletPrefabs = Resources.LoadAll<GunBullet>("Prefabs/Weapons/Soldier_Weapon/Bullets");
-            bulletObjects = new Stack<GunBullet>[bulletPrefabs.Length];
+            bulletObjects = new Queue<GunBullet>[bulletPrefabs.Length];
             for(int i=0; i<bulletObjects.Length; ++i){
-                bulletObjects[i] = new Stack<GunBullet>();
+                bulletObjects[i] = new Queue<GunBullet>();
             }
         }
     }

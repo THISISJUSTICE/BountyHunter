@@ -22,21 +22,22 @@ public class SoldierGun : MonoBehaviour
     }
 
     //발사
-    public void Shoot(int bulletKind){
+    public IEnumerator Shoot(int bulletKind){
         anim.Play("Shoot");
         fireEffect.Play();
+        yield return new WaitForSeconds(0.1f);
         CreateBullet(bulletKind);
     }
 
     //총알 생성
     void CreateBullet(int bulletKind){
         GunBullet bullet;
-        if(ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Count > 0){
-            bullet = ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Pop();
+        if(ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Count > 0){
+            bullet = ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Dequeue();
             bullet.transform.position = bulletPos.position;
         }
         else{
-            bullet = Instantiate(ObjectManager.Instace.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
+            bullet = Instantiate(ObjectManager.Instance.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
         }
         bullet.gameObject.SetActive(true);
         Rigidbody bulletRigid = bullet.rigid;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //탄창 갯수, 수류탄 갯수, 보유한 총
@@ -9,6 +10,7 @@ public class ChaserSoldier : PlayerBasic
     skill[] skills;
     int curWeapon; //현재 들고 있는 무기를 확인(0: Q(권총), 1: W(소총, 기관총), 2: E(저격총, 샷건), 3: R(수류탄, 폭탄))
     SoldierGun[] havingWeapons; //현재 가지고 있는 무기
+    bool[] cooldown; //현재 무기를 사용할 수 있는지 확인
 
     private void Awake() {
         PlayerBasicInit();
@@ -23,6 +25,8 @@ public class ChaserSoldier : PlayerBasic
         skills[3] = new skill(NormalAttack);
         skills[4] = new skill(NormalAttack);
         havingWeapons = new SoldierGun[4];
+        cooldown = new bool[4];
+        for(int i=0; i<4; ++i) cooldown[i] = false;
     }
 
     private void Start()
@@ -62,13 +66,16 @@ public class ChaserSoldier : PlayerBasic
 
     //권총 발사(이동 중 사격 가능)
     IEnumerator PistolShoot(){
-        if(!anim.GetBool("PistolShoot")){
+        if(!cooldown[curWeapon]){
             anim.SetBool("PistolShoot", true);
             noLRMove = true;
-            havingWeapons[curWeapon].Shoot(0);
+            cooldown[curWeapon] = true;
+            StartCoroutine(havingWeapons[curWeapon].Shoot(0));
             yield return new WaitForSeconds(havingWeapons[curWeapon].fireRate);
-            anim.SetBool("PistolShoot", false);
             noLRMove = false;
+            cooldown[curWeapon] = false;
+            yield return new WaitForSeconds(0.2f);
+            anim.SetBool("PistolShoot", false);
         }
     }
 

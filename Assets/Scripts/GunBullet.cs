@@ -27,16 +27,16 @@ public class GunBullet : MonoBehaviour
 
     //총알 삭제
     public void Disappear(){
-        ObjectManager.Instace.playerObjects.bulletObjects[bulletKind].Push(this);
+        ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Enqueue(this);
         gameObject.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision other) {
         if(other.transform.tag == "Obstacle"){
             other.transform.GetComponentInParent<ObstacleBasic>().Attacked(damage, 0);
-            
+            Disappear();
         }
-        Disappear();
+        
         
     }
 }
