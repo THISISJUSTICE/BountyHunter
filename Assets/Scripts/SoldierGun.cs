@@ -25,7 +25,7 @@ public class SoldierGun : MonoBehaviour
     public IEnumerator Shoot(int bulletKind){
         anim.Play("Shoot");
         fireEffect.Play();
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
         CreateBullet(bulletKind);
     }
 

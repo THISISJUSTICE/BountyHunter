@@ -231,43 +231,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rockObstacleData:
   - prefabKind: 0
-    area: 0100000001000000
+    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 1
-    objScale: {x: 1, y: 2, z: 1}
+    objScale: {x: 1.5, y: 2, z: 1}
     colPos: {x: 0, y: 0, z: 0}
     colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 10
     armor: 10
     magicRegistant: 5
   - prefabKind: 1
-    area: 0100000001000000
+    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 1
-    objScale: {x: 1, y: 1, z: 1}
+    objScale: {x: 1.2, y: 1, z: 1}
     colPos: {x: 0, y: 0, z: 0}
     colScale: {x: 1, y: 1, z: 1}
     maxHealthPoint: 15
     armor: 7
     magicRegistant: 3
   - prefabKind: 2
-    area: 0100000001000000
+    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 0.9
-    objScale: {x: 1, y: 1, z: 1}
+    objScale: {x: 1.3, y: 1, z: 1.3}
     colPos: {x: 0, y: 0, z: 0}
-    colScale: {x: 1, y: 1, z: 1}
+    colScale: {x: 1, y: 2.5, z: 1}
     maxHealthPoint: 5
     armor: 20
     magicRegistant: 5
   - prefabKind: 3
-    area: 0200000001000000
+    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: -2

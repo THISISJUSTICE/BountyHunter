@@ -23,7 +23,7 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
-    const float floorHorizontal = 1.6f; //가로 1칸 당 길이
+    const float floorHorizontal = 1.8f; //가로 1칸 당 길이
     const float floorVertical = 3.5f; //세로 1칸 당 길이
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
@@ -131,7 +131,7 @@ public class DungeonManager : MonoBehaviour
         float z = 10; //세로
 
         for(int i=0; i<dungeonInfo.Length; ++i, z+=floorVertical){
-            x = 3.2f;
+            x = floorHorizontal * 2;
             for(int j=0; j<dungeonInfo[0].Count; ++j, x-=floorHorizontal){
                 if(dungeonInfo[i][j] == 99) continue;
                 CreateObstacle(dungeonInfo[i][j], x, z);
