@@ -42,30 +42,24 @@ public class DungeonManager : MonoBehaviour
     #endregion
 
     private void Start() {
-        DungeonStart("Rock", 0);
+        DungeonStart(DungeonKind.Rock, 0);
     }
 
     //다른 스크립트에서 던전의 종류, 스테이지 레벨을 받아 던전 시작
-    public void DungeonStart(string dungeonKind, int stageLevel){
+    public void DungeonStart(DungeonKind dungeonKind, int stageLevel){
          ReadStageFile(dungeonKind, stageLevel);
          obstacleDatas = LoadDungeonObstacleData(dungeonKind);
          CreateDungeon();
     }
 
     //던전 종류와 스테이지 레벨을 받아 던전 파일을 고르고 그 파일의 정보를 읽기
-    void ReadStageFile(string dungeonKind, int stageLevel){
+    void ReadStageFile(DungeonKind dungeonKind, int stageLevel){
         //텍스트 파일 인식
         TextAsset txtFile;
-        switch(dungeonKind){
-            case "Rock":
-                txtFile = RockDungeonStage[stageLevel];
-                curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.rockObstaclePrefabs;
-                curObstacleObjects = ObjectManager.Instance.dungeonObjects.rockObstacleObjects;
-                break;
-            default:
-                txtFile = null;
-                break;
-        }
+        txtFile = RockDungeonStage[stageLevel];
+        curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.ReturnPrefabs(dungeonKind);
+        curObstacleObjects = ObjectManager.Instance.dungeonObjects.ReturnObjects(dungeonKind);
+        
 
         StringReader strRea = new StringReader(txtFile.text);
         string line;
@@ -99,12 +93,12 @@ public class DungeonManager : MonoBehaviour
     }
 
     //던전 종류에 따른 장애물 데이터 로드
-    List<DefineObstacles.Data> LoadDungeonObstacleData(string dungeonKind){
+    List<DefineObstacles.Data> LoadDungeonObstacleData(DungeonKind dungeonKind){
         TextAsset obda;
         List<DefineObstacles.Data> jsonList = new List<DefineObstacles.Data>();
 
         switch(dungeonKind){
-            case "Rock":
+            case DungeonKind.Rock:
                 obda = RockObstaclesData;
                 break;
             default:
@@ -158,14 +152,8 @@ public class DungeonManager : MonoBehaviour
         obsB.gameObject.SetActive(false);
     }
 
-    public void DungeonEnd(string dungeonKind){
-        switch(dungeonKind){
-            case "Rock":
-                ObjectManager.Instance.dungeonObjects.rockObstacleObjects = curObstacleObjects;
-                break;
-            default:
-                break;
-        }
+    public void DungeonEnd(DungeonKind dungeonKind){
+        ObjectManager.Instance.dungeonObjects.UpdateQueue(dungeonKind, curObstacleObjects);
     }
 
 }

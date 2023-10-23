@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -27,18 +30,58 @@ public class ObjectManager : MonoBehaviour
 
     [System.Serializable]
     public class DungeonObjects{ //던전의 장애물 오브젝트 모음
-        public ObstacleBasic[] rockObstaclePrefabs; //바위맵 장애물 프리팹 모음
-        public Queue<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
+        ObstacleBasic[] rockObstaclePrefabs; //바위맵 장애물 프리팹 모음
+        Queue<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
 
         public void Init(){
             rockObstaclePrefabs = Resources.LoadAll<ObstacleBasic>("Prefabs/Obstacles/RockDungeonObstacles");
             rockObstacleObjects = new Queue<ObstacleBasic>[rockObstaclePrefabs.Length];
             for(int i=0; i<rockObstacleObjects.Length; ++i){
                 rockObstacleObjects[i] = new Queue<ObstacleBasic>();
+            } 
+        }
+
+        public ObstacleBasic[] ReturnPrefabs(DungeonKind dungeonKind){
+            switch(dungeonKind){
+                case DungeonKind.Rock:
+                    return rockObstaclePrefabs;
+                
+            }
+            return null;
+        }
+
+        public Queue<ObstacleBasic>[] ReturnObjects(DungeonKind dungeonKind){
+            switch(dungeonKind){
+                case DungeonKind.Rock:
+                    return rockObstacleObjects;
+                
+            }
+
+            return null;
+        }
+
+        public void UpdateQueue(DungeonKind dungeonKind, Queue<ObstacleBasic>[] curQueue){
+            switch(dungeonKind){
+                case DungeonKind.Rock:
+                    rockObstacleObjects = curQueue;
+                    break;
+                
             }
         }
     }
     public DungeonObjects dungeonObjects;
+
+    [System.Serializable]
+    public class ObstacleEffects{ //장애물 오브젝트의 이펙트 모음
+        public ParticleSystem[] damagedEffectPrefabs; //장애물이 피해를 입을 때 이펙트 프리팹
+        public Queue<ParticleSystem>[] damagedEffectObjects; //피해 이펙트 오브젝트
+        public ParticleSystem[] collapseEffectPrefabs; //장애물이 파괴될 때 이펙트
+        public Queue<ParticleSystem>[] collapseEffectObjects; //파괴 이펙트 오브젝트
+
+        public void Init(){
+            
+        }
+    }
 
     [System.Serializable]
     public class PlayerObjects{ //플레이어 총알, 무기 등의 오브젝트 모음
