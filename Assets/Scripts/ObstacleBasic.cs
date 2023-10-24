@@ -7,6 +7,9 @@ using UnityEngine;
 //장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
 public class ObstacleBasic : MonoBehaviour
 {
+    DungeonKind dungeonKind; //던전 종류
+    int kind; //장애물의 종류
+    public Status obstacleStatus; //장애물 스테이터스
     public Vector3 waitPos; //장애물이 대기 중일 때의 위치
     public Vector3 appearPos; //장애물이 나타날 때의 위치
     public float appearSpeed; //장애물이 나타나는 속도
@@ -16,34 +19,30 @@ public class ObstacleBasic : MonoBehaviour
     bool isAppear; //장애물이 등장했는지 확인
     BoxCollider obstacleColi; //장애물의 충돌
 
-    public Status obstacleStatus; //장애물 스테이터스
-    
     int curHealthPoint; //장애물 현재 체력
-    int curHPDecreseIndex; //장애물 현재 체력의 남은 비율
+
     MeshRenderer meshRenderer;
-    DungeonManager dungeonManager;
     private void Awake() {
         meshRenderer = GetComponent<MeshRenderer>();
         obstacleColi = transform.GetChild(0).GetComponent<BoxCollider>();
     }
 
-    public void ObstacleBasicInit(DungeonManager dungeonManager, DefineObstacles.Data deObData, Vector3 appearPos){
-        gameObject.SetActive(true);
+    public void ObstacleBasicInit(DefineObstacles.Data deObData, Vector3 appearPos, DungeonKind dungeonKind){
         isAppear = false;
         meshRenderer.enabled = false;
-        this.dungeonManager = dungeonManager;
         this.appearPos = appearPos;
-        curHPDecreseIndex = 1;
+        this.dungeonKind = dungeonKind;
+        obstacleColi.enabled = true;
 
         //장애물 데이터 입력
         waitPos = new Vector3(appearPos.x + deObData.waitPos.x, deObData.waitPos.y, appearPos.z + deObData.waitPos.z);
+        kind = deObData.prefabKind;
         appearSpeed = deObData.appearSpeed;
         appearWaitTime = deObData.appearWaitTime;
         transform.position = waitPos;
         transform.localScale = deObData.objScale;
         obstacleColi.center = deObData.colPos;
         obstacleColi.size = deObData.colScale;
-        //OnCollisionEnter onCollisionEnter = new OnCollisionEnter();
         
         //스테이터스 입력
         obstacleStatus.maxHealthPoint = deObData.maxHealthPoint;
@@ -62,7 +61,7 @@ public class ObstacleBasic : MonoBehaviour
     IEnumerator Appear(){
         isAppear = true;
         yield return new WaitForSeconds(appearWaitTime);
-        meshRenderer.enabled = true;        
+        meshRenderer.enabled = true;
         for(int i=0; i<appearFrame; ++i){
             transform.position += (appearPos - waitPos) / appearFrame;
             yield return new WaitForSeconds(appearSpeed);
@@ -77,33 +76,55 @@ public class ObstacleBasic : MonoBehaviour
         }
     }
 
-    //피해를 받을 때 실행
-    public void Attacked(int attackDamage, int magicDamage){
+    //피해를 받을 때 실행(오브젝트의 위치 반환)
+    public void Attacked(int attackDamage, int magicDamage, Vector3 dmgPos){
         int dmg = obstacleStatus.CalculateDamage(attackDamage, magicDamage);
         if(dmg > 0){
             HPDecrese(dmg);
+            
+            if(dmg > obstacleStatus.maxHealthPoint / 50) DamagedEffect(dmgPos);
         }
     }
 
     //피해를 입었을 때 효과
-    void DamagedEffect(){
-        Debug.Log("데미지 이펙트");
+    void DamagedEffect(Vector3 dmgPos){
+        ParticleSystem effect;
+        try{ //장애물이 사라진 뒤 실행하는 오류 대비
+            if(ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Count > 0){
+            effect = ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Dequeue();
+            }
+            else {
+                effect = Instantiate(ObjectManager.Instance.obstacleEffects.damagedEffectPrefabs[(int)dungeonKind]);
+            }
+            
+            dmgPos.z = (transform.position.z - dmgPos.z)/2 + transform.position.z;
+            effect.gameObject.SetActive(true);
+            effect.transform.position = dmgPos;
+            StartCoroutine(EffectDisappear(effect));
+        }
+        catch{
+        }
     }
+
+    //이펙트를 큐에 보관
+    public IEnumerator EffectDisappear(ParticleSystem effect){
+        yield return new WaitForSeconds(1);
+        ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+        effect.gameObject.SetActive(false);
+    }
+
 
     //받은 데미지를 바탕으로 체력 감소
     void HPDecrese(int dmg){
         curHealthPoint -= dmg;
-        if(curHealthPoint <= obstacleStatus.maxHealthPoint / hpDecreseRate * (hpDecreseRate - curHPDecreseIndex)){
-            DamagedEffect();
-            curHPDecreseIndex = hpDecreseRate - (curHealthPoint * hpDecreseRate / obstacleStatus.maxHealthPoint);
-        }
         if(curHealthPoint <= 0) Death();
     }
 
     //체력이 0이 되어 파괴
     void Death(){
+        meshRenderer.enabled = false;
+        obstacleColi.enabled = false;
         DestroyEffect();
-        gameObject.SetActive(false);
     }
 
     void DestroyEffect(){

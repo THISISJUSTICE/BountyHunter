@@ -6,7 +6,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 // 할 일
-// - 장애물 소환
 // - 몬스터 소환진 소환
 
 
@@ -28,9 +27,11 @@ public class DungeonManager : MonoBehaviour
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
+    DungeonKind curDungeonKind; //현재 던전의 종류
     List<DefineObstacles.Data> obstacleDatas; //장애물 종류에 따른 데이터
     Queue<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
     ObstacleBasic[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
+    Queue<ObstacleBasic>[] createdObjects; //생성된 풀링 오브젝트(던전이 끝난 뒤 오브젝트 관리)
 
     #region StageObstacles
 
@@ -47,20 +48,34 @@ public class DungeonManager : MonoBehaviour
 
     //다른 스크립트에서 던전의 종류, 스테이지 레벨을 받아 던전 시작
     public void DungeonStart(DungeonKind dungeonKind, int stageLevel){
-         ReadStageFile(dungeonKind, stageLevel);
-         obstacleDatas = LoadDungeonObstacleData(dungeonKind);
+        curDungeonKind = dungeonKind;
+         ReadStageFile(stageLevel);
+         obstacleDatas = LoadDungeonObstacleData();
          CreateDungeon();
     }
 
     //던전 종류와 스테이지 레벨을 받아 던전 파일을 고르고 그 파일의 정보를 읽기
-    void ReadStageFile(DungeonKind dungeonKind, int stageLevel){
-        //텍스트 파일 인식
+    void ReadStageFile(int stageLevel){
         TextAsset txtFile;
-        txtFile = RockDungeonStage[stageLevel];
-        curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.ReturnPrefabs(dungeonKind);
-        curObstacleObjects = ObjectManager.Instance.dungeonObjects.ReturnObjects(dungeonKind);
-        
 
+        curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.ReturnPrefabs(curDungeonKind);
+        curObstacleObjects = ObjectManager.Instance.dungeonObjects.ReturnObjects(curDungeonKind);
+        createdObjects = new Queue<ObstacleBasic>[curObstacleObjects.Length];
+
+        for(int i=0; i<createdObjects.Length; ++i){
+            createdObjects[i] = new Queue<ObstacleBasic>();
+        }
+
+        //텍스트 파일 인식
+        switch(curDungeonKind){
+            case DungeonKind.Rock:
+                txtFile = RockDungeonStage[stageLevel];
+                break;
+            default:
+                txtFile = null;
+                break;
+        }
+        
         StringReader strRea = new StringReader(txtFile.text);
         string line;
         int index = 0; //dungeonInfo 리스트의 배열 인덱스
@@ -93,11 +108,11 @@ public class DungeonManager : MonoBehaviour
     }
 
     //던전 종류에 따른 장애물 데이터 로드
-    List<DefineObstacles.Data> LoadDungeonObstacleData(DungeonKind dungeonKind){
+    List<DefineObstacles.Data> LoadDungeonObstacleData(){
         TextAsset obda;
         List<DefineObstacles.Data> jsonList = new List<DefineObstacles.Data>();
 
-        switch(dungeonKind){
+        switch(curDungeonKind){
             case DungeonKind.Rock:
                 obda = RockObstaclesData;
                 break;
@@ -126,34 +141,46 @@ public class DungeonManager : MonoBehaviour
 
         for(int i=0; i<dungeonInfo.Length; ++i, z+=floorVertical){
             x = floorHorizontal * 2;
-            for(int j=0; j<dungeonInfo[0].Count; ++j, x-=floorHorizontal){
+            for(int j=0; j<dungeonInfo[i].Count; ++j, x-=floorHorizontal){
                 if(dungeonInfo[i][j] == 99) continue;
                 CreateObstacle(dungeonInfo[i][j], x, z);
             }
         }
     }
 
-    //풀링된 오브젝트가 없으면 생성
+    //풀링 큐에 오브젝트가 없으면 생성
     void CreateObstacle(int index, float x, float z){
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
             curob = curObstacleObjects[num].Dequeue();
-            curob.gameObject.SetActive(true);
         }
         else{ 
             curob = Instantiate(curObstaclePrefabs[num]);
         }
-        curob.ObstacleBasicInit(this, obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z));
+        curob.gameObject.SetActive(true);
+        curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind);
+        createdObjects[num].Enqueue(curob);
     }
 
-    public void DeleteObstacle(ObstacleBasic obsB, int kind){
-        curObstacleObjects[kind].Enqueue(obsB);
-        obsB.gameObject.SetActive(false);
-    }
-
-    public void DungeonEnd(DungeonKind dungeonKind){
+    //던전이 끝나면 호출
+    public IEnumerator DungeonEnd(DungeonKind dungeonKind){
+        yield return new WaitForSeconds(1); //장애물에서 처리할 연산 대기
+        DeleteObstacle();
         ObjectManager.Instance.dungeonObjects.UpdateQueue(dungeonKind, curObstacleObjects);
+    }
+
+    //던전이 끝나고 생성된 오브젝트를 큐에 보관, 비활성화
+    void DeleteObstacle(){
+        ObstacleBasic obsB;
+        for(int i=0; i<createdObjects.Length; ++i){
+            while(createdObjects[i].Count > 0){
+                obsB = createdObjects[i].Dequeue();
+                obsB.gameObject.SetActive(false);
+                curObstacleObjects[i].Enqueue(obsB);
+                
+            }
+        }
     }
 
 }

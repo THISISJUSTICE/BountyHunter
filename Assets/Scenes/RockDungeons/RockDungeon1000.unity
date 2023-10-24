@@ -152,8 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78f3a5beba54f1a4cb9c0402424e5cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonObjects:
-    rockObstaclePrefabs: []
+  obstacleEffects:
+    damagedEffectPrefabs: []
+    collapseEffectPrefabs: []
   playerObjects:
     pistolPrefabs: []
     bulletPrefabs: []
@@ -745,7 +746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7946587218401312661, guid: cc60063e71dbfe5428c3160053f89a37, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.6
+      value: -1.08
       objectReference: {fileID: 0}
     - target: {fileID: 7946587218401312661, guid: cc60063e71dbfe5428c3160053f89a37, type: 3}
       propertyPath: m_LocalPosition.y
@@ -817,16 +818,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58ce82e9dac50042aed537a642d41ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacleStatus:
+    maxHealthPoint: 2
+    armor: 5
+    magicRegistant: 0
   waitPos: {x: 0, y: -2, z: 12}
   appearPos: {x: 0, y: 0, z: 0}
   appearSpeed: 0.05
   appearWaitTime: 0
   appearFrame: 20
   hpDecreseRate: 0
-  obstacleStatus:
-    maxHealthPoint: 2
-    armor: 5
-    magicRegistant: 0
 --- !u!65 &1314338068
 BoxCollider:
   m_ObjectHideFlags: 0

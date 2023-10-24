@@ -16,9 +16,9 @@ public class ObjectManager : MonoBehaviour
     void SingletonInit(){
         if(instance == null){
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
-        else Destroy(this.gameObject);
+        else Destroy(gameObject);
     }
 
     public static ObjectManager Instance{
@@ -79,9 +79,17 @@ public class ObjectManager : MonoBehaviour
         public Queue<ParticleSystem>[] collapseEffectObjects; //파괴 이펙트 오브젝트
 
         public void Init(){
+            damagedEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects");
+            damagedEffectObjects = new Queue<ParticleSystem>[damagedEffectPrefabs.Length];
+
             
+
+            for(int i=0; i<damagedEffectObjects.Length; ++i){
+                damagedEffectObjects[i] = new Queue<ParticleSystem>();
+            }
         }
     }
+    public ObstacleEffects obstacleEffects;
 
     [System.Serializable]
     public class PlayerObjects{ //플레이어 총알, 무기 등의 오브젝트 모음
@@ -111,6 +119,8 @@ public class ObjectManager : MonoBehaviour
         dungeonObjects.Init();
         playerObjects = new PlayerObjects();
         playerObjects.Init();
+        obstacleEffects = new ObstacleEffects();
+        obstacleEffects.Init();
     }
 
     private void Awake() {

@@ -196,10 +196,16 @@ public class PlayerBasic : MonoBehaviour
         if(other.gameObject.tag == "Obstacle"){
             if(curSpeed == playerStatus.acceleration && rushTime > 0.8f){
                 rushTime = 0;
-                ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
-                obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
-                StartCoroutine(BeSlowed(0.1f, 0.4f));
-                RushDamaged(obstacleBasic.obstacleStatus.armor);
+                
+                try{ //장애물이 파괴되는 동시에 부딪히는 경우 대비
+                    ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
+                    obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
+                    StartCoroutine(BeSlowed(0.1f, 0.4f));
+                    RushDamaged(obstacleBasic.obstacleStatus.armor);
+                }
+                catch{
+                    return;
+                }
             }
         }
     }
