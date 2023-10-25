@@ -284,15 +284,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12.71
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5121932360660543766, guid: f363d29669c5fc140851514a42a53eff, type: 3}
       propertyPath: m_LocalRotation.w
@@ -822,6 +822,7 @@ MonoBehaviour:
     maxHealthPoint: 2
     armor: 5
     magicRegistant: 0
+  area: 
   waitPos: {x: 0, y: -2, z: 12}
   appearPos: {x: 0, y: 0, z: 0}
   appearSpeed: 0.05

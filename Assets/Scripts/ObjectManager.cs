@@ -79,13 +79,18 @@ public class ObjectManager : MonoBehaviour
         public Queue<ParticleSystem>[] collapseEffectObjects; //파괴 이펙트 오브젝트
 
         public void Init(){
-            damagedEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects");
+            damagedEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects/DamagedEffects");
             damagedEffectObjects = new Queue<ParticleSystem>[damagedEffectPrefabs.Length];
 
-            
+            collapseEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects/CollapseEffects");
+            collapseEffectObjects = new Queue<ParticleSystem>[collapseEffectPrefabs.Length];
 
             for(int i=0; i<damagedEffectObjects.Length; ++i){
                 damagedEffectObjects[i] = new Queue<ParticleSystem>();
+            }
+
+            for(int i=0; i<collapseEffectObjects.Length; ++i){
+                collapseEffectObjects[i] = new Queue<ParticleSystem>();
             }
         }
     }

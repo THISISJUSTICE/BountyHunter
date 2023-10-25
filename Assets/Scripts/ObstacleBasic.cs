@@ -10,6 +10,7 @@ public class ObstacleBasic : MonoBehaviour
     DungeonKind dungeonKind; //던전 종류
     int kind; //장애물의 종류
     public Status obstacleStatus; //장애물 스테이터스
+    public int[] area; //장애물이 차지하는 넓이
     public Vector3 waitPos; //장애물이 대기 중일 때의 위치
     public Vector3 appearPos; //장애물이 나타날 때의 위치
     public float appearSpeed; //장애물이 나타나는 속도
@@ -25,6 +26,7 @@ public class ObstacleBasic : MonoBehaviour
     private void Awake() {
         meshRenderer = GetComponent<MeshRenderer>();
         obstacleColi = transform.GetChild(0).GetComponent<BoxCollider>();
+        area = new int[2];
     }
 
     public void ObstacleBasicInit(DefineObstacles.Data deObData, Vector3 appearPos, DungeonKind dungeonKind){
@@ -37,6 +39,8 @@ public class ObstacleBasic : MonoBehaviour
         //장애물 데이터 입력
         waitPos = new Vector3(appearPos.x + deObData.waitPos.x, deObData.waitPos.y, appearPos.z + deObData.waitPos.z);
         kind = deObData.prefabKind;
+        area[0] = (int)deObData.area.x;
+        area[1] = (int)deObData.area.y;
         appearSpeed = deObData.appearSpeed;
         appearWaitTime = deObData.appearWaitTime;
         transform.position = waitPos;
@@ -100,16 +104,27 @@ public class ObstacleBasic : MonoBehaviour
             dmgPos.z = (transform.position.z - dmgPos.z)/2 + transform.position.z;
             effect.gameObject.SetActive(true);
             effect.transform.position = dmgPos;
-            StartCoroutine(EffectDisappear(effect));
+            StartCoroutine(EffectDisappear(effect, 0));
         }
         catch{
         }
     }
 
-    //이펙트를 큐에 보관
-    public IEnumerator EffectDisappear(ParticleSystem effect){
+    //이펙트를 큐에 보관(0: 피격 이펙트, 1: 파괴 이펙트)
+    public IEnumerator EffectDisappear(ParticleSystem effect, int effectKind){
         yield return new WaitForSeconds(1);
-        ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+        switch(effectKind){
+            case 0:
+                ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+                break;
+            case 1:
+                ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Enqueue(effect);
+                break;
+
+        }
+        if(effectKind == 0)
+            ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+        
         effect.gameObject.SetActive(false);
     }
 
@@ -124,10 +139,24 @@ public class ObstacleBasic : MonoBehaviour
     void Death(){
         meshRenderer.enabled = false;
         obstacleColi.enabled = false;
-        DestroyEffect();
+        CollapseEffect();
     }
 
-    void DestroyEffect(){
-
+    void CollapseEffect(){
+        ParticleSystem effect;
+        try{ //장애물이 사라진 뒤 실행하는 오류 대비
+            if(ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Count > 0){
+            effect = ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Dequeue();
+            }
+            else {
+                effect = Instantiate(ObjectManager.Instance.obstacleEffects.collapseEffectPrefabs[(int)dungeonKind]);
+            }
+            
+            effect.gameObject.SetActive(true);
+            effect.transform.position = transform.position;
+            StartCoroutine(EffectDisappear(effect, 1));
+        }
+        catch{
+        }
     }
 }
