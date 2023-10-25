@@ -12,7 +12,6 @@ public class DefineObstacles : MonoBehaviour
     [System.Serializable]
     public class Data{ //장애물 공통 데이터
         public int prefabKind; //원본 장애물의 프리팹 종류
-        public Vector2 area; //차지하는 칸 수 가로, 세로
         public Vector3 waitPos; //장애물이 대기 중일 때의 포지션 x,y,z
         public float appearWaitTime; //장애물이 나타날 때 대기 시간
         public float appearSpeed; //장애물이 나타나는 속도

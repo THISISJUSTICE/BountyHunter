@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerBasic : MonoBehaviour
 {
     #region Variable
-    public float lrPos; //플레이어의 좌우 칸마다의 이동 값
+    float lrPos; //플레이어의 좌우 칸마다의 이동 값
     public float lrMoveDelay; //플레이어의 좌우 이동 딜레이
     public int lrMoveFrame; //플레이어의 좌우 이동 프레임
     public int mapSpace = 5; // 맵의 좌우 칸 수(무조건 홀수)
@@ -39,6 +39,7 @@ public class PlayerBasic : MonoBehaviour
     }
 
     protected void PlayerBasicInit(){
+        lrPos = new Common().floorHorizontal;
         lrSpace = new float[mapSpace];
         curHealthPoint = playerStatus.maxHealthPoint;
         curMagicPoint = playerStatus.maxMagicPoint;
@@ -199,7 +200,7 @@ public class PlayerBasic : MonoBehaviour
                 
                 try{ //장애물이 파괴되는 동시에 부딪히는 경우 대비
                     ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
-                    obstacleBasic.RushDamaged(playerStatus.armor, playerStatus.acceleration);
+                    obstacleBasic.Rushed(playerStatus.armor, playerStatus.acceleration);
                     StartCoroutine(BeSlowed(0.1f, 0.4f));
                     RushDamaged(obstacleBasic.obstacleStatus.armor);
                 }

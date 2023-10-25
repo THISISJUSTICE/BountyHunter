@@ -12,6 +12,16 @@ public class Status
         int dmg = (int)Mathf.Ceil((float)attackDamage/armor) + (int)Mathf.Ceil((float)magicDamage/magicRegistant);
         return dmg * 5;
     }
+
+    //돌진 시 받는 데미지 계산
+    public int RushDamaged(int myArmor, int matchArmor, float acceleration){
+        if(myArmor / 2 < matchArmor){
+            return matchArmor/myArmor * (int)(acceleration *20);
+            //HPDecrese(armor / obstacleStatus.armor * (int)(acceleration * 20));
+        }
+        return 0;
+    }
+
 }
 
 [System.Serializable]

@@ -10,13 +10,11 @@ public class ObstacleBasic : MonoBehaviour
     DungeonKind dungeonKind; //던전 종류
     int kind; //장애물의 종류
     public Status obstacleStatus; //장애물 스테이터스
-    public int[] area; //장애물이 차지하는 넓이
     public Vector3 waitPos; //장애물이 대기 중일 때의 위치
     public Vector3 appearPos; //장애물이 나타날 때의 위치
     public float appearSpeed; //장애물이 나타나는 속도
     public float appearWaitTime; //장애물이 나타날 때 대기 시간
     public int appearFrame; //장애물이 나타나는 프레임
-    public int hpDecreseRate; //장애물의 체력을 특정 비율로 나누기
     bool isAppear; //장애물이 등장했는지 확인
     BoxCollider obstacleColi; //장애물의 충돌
 
@@ -26,7 +24,6 @@ public class ObstacleBasic : MonoBehaviour
     private void Awake() {
         meshRenderer = GetComponent<MeshRenderer>();
         obstacleColi = transform.GetChild(0).GetComponent<BoxCollider>();
-        area = new int[2];
     }
 
     public void ObstacleBasicInit(DefineObstacles.Data deObData, Vector3 appearPos, DungeonKind dungeonKind){
@@ -39,8 +36,6 @@ public class ObstacleBasic : MonoBehaviour
         //장애물 데이터 입력
         waitPos = new Vector3(appearPos.x + deObData.waitPos.x, deObData.waitPos.y, appearPos.z + deObData.waitPos.z);
         kind = deObData.prefabKind;
-        area[0] = (int)deObData.area.x;
-        area[1] = (int)deObData.area.y;
         appearSpeed = deObData.appearSpeed;
         appearWaitTime = deObData.appearWaitTime;
         transform.position = waitPos;
@@ -72,12 +67,9 @@ public class ObstacleBasic : MonoBehaviour
         } 
     }
 
-    //돌진 시 받는 데미지 계산
-    public void RushDamaged(int armor, float acceleration){
-        Debug.Log("충돌");
-        if(obstacleStatus.armor / 2 < armor){
-            HPDecrese(armor / obstacleStatus.armor * (int)(acceleration * 20));
-        }
+    //돌진을 받을 시
+    public void Rushed(int armor, float acceleration){
+        HPDecrese(obstacleStatus.RushDamaged(obstacleStatus.armor, armor, acceleration));
     }
 
     //피해를 받을 때 실행(오브젝트의 위치 반환)

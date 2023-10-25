@@ -22,8 +22,8 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
-    const float floorHorizontal = 1.8f; //가로 1칸 당 길이
-    const float floorVertical = 3.5f; //세로 1칸 당 길이
+    public float floorHorizontal; //가로 1칸 당 길이
+    public float floorVertical; //세로 1칸 당 길이
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
@@ -42,6 +42,12 @@ public class DungeonManager : MonoBehaviour
 
     #endregion
 
+    private void Awake() {
+        Common common = new Common();
+        floorHorizontal = common.floorHorizontal;
+        floorVertical = common.floorVertical;
+    }
+
     private void Start() {
         DungeonStart(DungeonKind.Rock, 0);
     }
@@ -49,9 +55,9 @@ public class DungeonManager : MonoBehaviour
     //다른 스크립트에서 던전의 종류, 스테이지 레벨을 받아 던전 시작
     public void DungeonStart(DungeonKind dungeonKind, int stageLevel){
         curDungeonKind = dungeonKind;
-         ReadStageFile(stageLevel);
-         obstacleDatas = LoadDungeonObstacleData();
-         CreateDungeon();
+        ReadStageFile(stageLevel);
+        obstacleDatas = LoadDungeonObstacleData();
+        CreateDungeon();
     }
 
     //던전 종류와 스테이지 레벨을 받아 던전 파일을 고르고 그 파일의 정보를 읽기

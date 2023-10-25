@@ -111,16 +111,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58ce82e9dac50042aed537a642d41ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacleStatus:
+    maxHealthPoint: 10
+    armor: 5
+    magicRegistant: 0
   waitPos: {x: 0, y: 0, z: 0}
   appearPos: {x: 0, y: 0, z: 0}
   appearSpeed: 0.05
   appearWaitTime: 0
   appearFrame: 20
-  hpDecreseRate: 10
-  obstacleStatus:
-    maxHealthPoint: 10
-    armor: 5
-    magicRegistant: 0
 --- !u!1 &1795314741753747967
 GameObject:
   m_ObjectHideFlags: 0

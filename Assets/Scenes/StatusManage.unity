@@ -231,7 +231,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rockObstacleData:
   - prefabKind: 0
-    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
@@ -243,19 +242,17 @@ MonoBehaviour:
     armor: 10
     magicRegistant: 5
   - prefabKind: 1
-    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: 0.05
     appearheight: 1
     objScale: {x: 1.2, y: 1, z: 1}
     colPos: {x: 0, y: 0, z: 0}
-    colScale: {x: 1, y: 1, z: 1}
+    colScale: {x: 1, y: 2, z: 1}
     maxHealthPoint: 15
     armor: 7
     magicRegistant: 3
   - prefabKind: 2
-    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 5
     appearSpeed: 0.01
@@ -267,7 +264,6 @@ MonoBehaviour:
     armor: 20
     magicRegistant: 5
   - prefabKind: 3
-    area: {x: 1, y: 1}
     waitPos: {x: 0, y: -2, z: 0}
     appearWaitTime: 0
     appearSpeed: -2
