@@ -31,13 +31,13 @@ public class ObjectManager : MonoBehaviour
     [System.Serializable]
     public class DungeonObjects{ //던전의 장애물 오브젝트 모음
         ObstacleBasic[] rockObstaclePrefabs; //바위맵 장애물 프리팹 모음
-        Queue<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
+        Stack<ObstacleBasic>[] rockObstacleObjects; //바위맵 장애물 풀링용 오브젝트
 
         public void Init(){
             rockObstaclePrefabs = Resources.LoadAll<ObstacleBasic>("Prefabs/Obstacles/RockDungeonObstacles");
-            rockObstacleObjects = new Queue<ObstacleBasic>[rockObstaclePrefabs.Length];
+            rockObstacleObjects = new Stack<ObstacleBasic>[rockObstaclePrefabs.Length];
             for(int i=0; i<rockObstacleObjects.Length; ++i){
-                rockObstacleObjects[i] = new Queue<ObstacleBasic>();
+                rockObstacleObjects[i] = new Stack<ObstacleBasic>();
             } 
         }
 
@@ -50,7 +50,7 @@ public class ObjectManager : MonoBehaviour
             return null;
         }
 
-        public Queue<ObstacleBasic>[] ReturnObjects(DungeonKind dungeonKind){
+        public Stack<ObstacleBasic>[] ReturnObjects(DungeonKind dungeonKind){
             switch(dungeonKind){
                 case DungeonKind.Rock:
                     return rockObstacleObjects;
@@ -60,10 +60,10 @@ public class ObjectManager : MonoBehaviour
             return null;
         }
 
-        public void UpdateQueue(DungeonKind dungeonKind, Queue<ObstacleBasic>[] curQueue){
+        public void UpdateStack(DungeonKind dungeonKind, Stack<ObstacleBasic>[] curStack){
             switch(dungeonKind){
                 case DungeonKind.Rock:
-                    rockObstacleObjects = curQueue;
+                    rockObstacleObjects = curStack;
                     break;
                 
             }
@@ -74,23 +74,23 @@ public class ObjectManager : MonoBehaviour
     [System.Serializable]
     public class ObstacleEffects{ //장애물 오브젝트의 이펙트 모음
         public ParticleSystem[] damagedEffectPrefabs; //장애물이 피해를 입을 때 이펙트 프리팹
-        public Queue<ParticleSystem>[] damagedEffectObjects; //피해 이펙트 오브젝트
+        public Stack<ParticleSystem>[] damagedEffectObjects; //피해 이펙트 오브젝트
         public ParticleSystem[] collapseEffectPrefabs; //장애물이 파괴될 때 이펙트
-        public Queue<ParticleSystem>[] collapseEffectObjects; //파괴 이펙트 오브젝트
+        public Stack<ParticleSystem>[] collapseEffectObjects; //파괴 이펙트 오브젝트
 
         public void Init(){
             damagedEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects/DamagedEffects");
-            damagedEffectObjects = new Queue<ParticleSystem>[damagedEffectPrefabs.Length];
+            damagedEffectObjects = new Stack<ParticleSystem>[damagedEffectPrefabs.Length];
 
             collapseEffectPrefabs = Resources.LoadAll<ParticleSystem>("Prefabs/Obstacles/Effects/CollapseEffects");
-            collapseEffectObjects = new Queue<ParticleSystem>[collapseEffectPrefabs.Length];
+            collapseEffectObjects = new Stack<ParticleSystem>[collapseEffectPrefabs.Length];
 
             for(int i=0; i<damagedEffectObjects.Length; ++i){
-                damagedEffectObjects[i] = new Queue<ParticleSystem>();
+                damagedEffectObjects[i] = new Stack<ParticleSystem>();
             }
 
             for(int i=0; i<collapseEffectObjects.Length; ++i){
-                collapseEffectObjects[i] = new Queue<ParticleSystem>();
+                collapseEffectObjects[i] = new Stack<ParticleSystem>();
             }
         }
     }
@@ -99,21 +99,21 @@ public class ObjectManager : MonoBehaviour
     [System.Serializable]
     public class PlayerObjects{ //플레이어 총알, 무기 등의 오브젝트 모음
         public SoldierGun[] pistolPrefabs; //군인 총 프리팹 모음
-        public Queue<SoldierGun>[] pistolObjects; //군인 총 풀리용 오브젝트
+        public Stack<SoldierGun>[] pistolObjects; //군인 총 풀리용 오브젝트
         public GunBullet[] bulletPrefabs; //총알 프리팹 모음 (다양한 총알)
-        public Queue<GunBullet>[] bulletObjects; //총알 풀랑용 오브젝트
+        public Stack<GunBullet>[] bulletObjects; //총알 풀랑용 오브젝트
 
         public void Init(){
             pistolPrefabs = Resources.LoadAll<SoldierGun>("Prefabs/Weapons/Soldier_Weapon/Pistols");
-            pistolObjects = new Queue<SoldierGun>[pistolPrefabs.Length];
+            pistolObjects = new Stack<SoldierGun>[pistolPrefabs.Length];
             for(int i=0; i<pistolObjects.Length; ++i){
-                pistolObjects[i] = new Queue<SoldierGun>();
+                pistolObjects[i] = new Stack<SoldierGun>();
             }
 
             bulletPrefabs = Resources.LoadAll<GunBullet>("Prefabs/Weapons/Soldier_Weapon/Bullets");
-            bulletObjects = new Queue<GunBullet>[bulletPrefabs.Length];
+            bulletObjects = new Stack<GunBullet>[bulletPrefabs.Length];
             for(int i=0; i<bulletObjects.Length; ++i){
-                bulletObjects[i] = new Queue<GunBullet>();
+                bulletObjects[i] = new Stack<GunBullet>();
             }
         }
     }

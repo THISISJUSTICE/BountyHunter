@@ -95,7 +95,7 @@ public class ObstacleBasic : MonoBehaviour
         ParticleSystem effect;
         try{ //장애물이 사라진 뒤 실행하는 오류 대비
             if(ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Count > 0){
-            effect = ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Dequeue();
+            effect = ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Pop();
             }
             else {
                 effect = Instantiate(ObjectManager.Instance.obstacleEffects.damagedEffectPrefabs[(int)dungeonKind]);
@@ -115,15 +115,15 @@ public class ObstacleBasic : MonoBehaviour
         yield return new WaitForSeconds(1);
         switch(effectKind){
             case 0:
-                ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+                ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
                 break;
             case 1:
-                ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Enqueue(effect);
+                ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Push(effect);
                 break;
 
         }
         if(effectKind == 0)
-            ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Enqueue(effect);
+            ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
         
         effect.gameObject.SetActive(false);
     }
@@ -146,7 +146,7 @@ public class ObstacleBasic : MonoBehaviour
         ParticleSystem effect;
         try{ //장애물이 사라진 뒤 실행하는 오류 대비
             if(ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Count > 0){
-            effect = ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Dequeue();
+            effect = ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Pop();
             }
             else {
                 effect = Instantiate(ObjectManager.Instance.obstacleEffects.collapseEffectPrefabs[(int)dungeonKind]);

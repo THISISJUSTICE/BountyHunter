@@ -27,7 +27,7 @@ public class GunBullet : MonoBehaviour
 
     //총알 삭제
     public void Disappear(){
-        ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Enqueue(this);
+        ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Push(this);
         gameObject.SetActive(false);
     }
 

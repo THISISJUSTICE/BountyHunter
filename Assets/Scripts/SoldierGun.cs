@@ -33,7 +33,7 @@ public class SoldierGun : MonoBehaviour
     void CreateBullet(int bulletKind){
         GunBullet bullet;
         if(ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Count > 0){
-            bullet = ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Dequeue();
+            bullet = ObjectManager.Instance.playerObjects.bulletObjects[bulletKind].Pop();
             bullet.transform.position = bulletPos.position;
         }
         else{

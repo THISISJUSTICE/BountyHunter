@@ -29,9 +29,9 @@ public class DungeonManager : MonoBehaviour
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
     DungeonKind curDungeonKind; //현재 던전의 종류
     List<DefineObstacles.Data> obstacleDatas; //장애물 종류에 따른 데이터
-    Queue<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
+    Stack<ObstacleBasic>[] curObstacleObjects; //현재 맵에 맞는 풀링용 오브젝트
     ObstacleBasic[] curObstaclePrefabs; //현재 맵에 맞는 장애물 프리팹 모음
-    Queue<ObstacleBasic>[] createdObjects; //생성된 풀링 오브젝트(던전이 끝난 뒤 오브젝트 관리)
+    Stack<ObstacleBasic>[] createdObjects; //생성된 풀링 오브젝트(던전이 끝난 뒤 오브젝트 관리)
 
     #region StageObstacles
 
@@ -60,10 +60,10 @@ public class DungeonManager : MonoBehaviour
 
         curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.ReturnPrefabs(curDungeonKind);
         curObstacleObjects = ObjectManager.Instance.dungeonObjects.ReturnObjects(curDungeonKind);
-        createdObjects = new Queue<ObstacleBasic>[curObstacleObjects.Length];
+        createdObjects = new Stack<ObstacleBasic>[curObstacleObjects.Length];
 
         for(int i=0; i<createdObjects.Length; ++i){
-            createdObjects[i] = new Queue<ObstacleBasic>();
+            createdObjects[i] = new Stack<ObstacleBasic>();
         }
 
         //텍스트 파일 인식
@@ -153,21 +153,21 @@ public class DungeonManager : MonoBehaviour
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
-            curob = curObstacleObjects[num].Dequeue();
+            curob = curObstacleObjects[num].Pop();
         }
         else{ 
             curob = Instantiate(curObstaclePrefabs[num]);
         }
         curob.gameObject.SetActive(true);
         curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind);
-        createdObjects[num].Enqueue(curob);
+        createdObjects[num].Push(curob);
     }
 
     //던전이 끝나면 호출
     public IEnumerator DungeonEnd(DungeonKind dungeonKind){
         yield return new WaitForSeconds(1); //장애물에서 처리할 연산 대기
         DeleteObstacle();
-        ObjectManager.Instance.dungeonObjects.UpdateQueue(dungeonKind, curObstacleObjects);
+        ObjectManager.Instance.dungeonObjects.UpdateStack(dungeonKind, curObstacleObjects);
     }
 
     //던전이 끝나고 생성된 오브젝트를 큐에 보관, 비활성화
@@ -175,9 +175,9 @@ public class DungeonManager : MonoBehaviour
         ObstacleBasic obsB;
         for(int i=0; i<createdObjects.Length; ++i){
             while(createdObjects[i].Count > 0){
-                obsB = createdObjects[i].Dequeue();
+                obsB = createdObjects[i].Pop();
                 obsB.gameObject.SetActive(false);
-                curObstacleObjects[i].Enqueue(obsB);
+                curObstacleObjects[i].Push(obsB);
                 
             }
         }
