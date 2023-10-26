@@ -15,7 +15,13 @@ public class ChaserSoldier : PlayerBasic
     private void Awake() {
         PlayerBasicInit();
         SkillInit();
+        Test();
     }
+
+    protected override void Say()
+    {
+        Debug.Log("ChaserSoldier Say");
+    } 
 
     void SkillInit(){
         skills = new skill[5];
@@ -108,5 +114,9 @@ public class ChaserSoldier : PlayerBasic
     //총알이 없을 경우 나이프 휘두르기
     void SwingKnife(){
 
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        ObstacleCollisionCheck(other);
     }
 }

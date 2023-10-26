@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 //장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
-public class ObstacleBasic : MonoBehaviour
+public class ObstacleBasic : ObjectsBasic
 {
     DungeonKind dungeonKind; //던전 종류
     int kind; //장애물의 종류
@@ -17,8 +17,6 @@ public class ObstacleBasic : MonoBehaviour
     public int appearFrame; //장애물이 나타나는 프레임
     bool isAppear; //장애물이 등장했는지 확인
     BoxCollider obstacleColi; //장애물의 충돌
-
-    int curHealthPoint; //장애물 현재 체력
 
     MeshRenderer meshRenderer;
     private void Awake() {
@@ -46,6 +44,7 @@ public class ObstacleBasic : MonoBehaviour
         //스테이터스 입력
         obstacleStatus.maxHealthPoint = deObData.maxHealthPoint;
         obstacleStatus.armor = deObData.armor;
+        ownArmor = obstacleStatus.armor;
         obstacleStatus.magicRegistant = deObData.magicRegistant;
         
         curHealthPoint = obstacleStatus.maxHealthPoint;
@@ -67,10 +66,10 @@ public class ObstacleBasic : MonoBehaviour
         } 
     }
 
-    //돌진을 받을 시
-    public void Rushed(int armor, float acceleration){
-        HPDecrese(obstacleStatus.RushDamaged(obstacleStatus.armor, armor, acceleration));
-    }
+    // //돌진을 받을 시
+    // public void Rushed(int armor, float acceleration){
+    //     HPDecrese(RushDamaged(obstacleStatus.armor, armor, acceleration));
+    // }
 
     //피해를 받을 때 실행(오브젝트의 위치 반환)
     public void Attacked(int attackDamage, int magicDamage, Vector3 dmgPos){
@@ -128,7 +127,7 @@ public class ObstacleBasic : MonoBehaviour
     }
 
     //체력이 0이 되어 파괴
-    void Death(){
+    protected override void Death(){
         meshRenderer.enabled = false;
         obstacleColi.enabled = false;
         CollapseEffect();

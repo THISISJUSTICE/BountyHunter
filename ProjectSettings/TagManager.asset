@@ -9,6 +9,7 @@ TagManager:
   - Background
   - Bullet
   - ChaserBullet
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Obstacle
   - ChaserBullet
   - Chaser
-  - 
+  - Monster
   - 
   - 
   - 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Linq;
 using UnityEditor.Timeline.Actions;
 
+//소환할 장애물 정보를 정의, 저장
 public class DefineObstacles : MonoBehaviour
 {
     [System.Serializable]
@@ -19,6 +20,8 @@ public class DefineObstacles : MonoBehaviour
         public Vector3 objScale; //오브젝트 스케일 x, y, z
         public Vector3 colPos; //충돌 콜라이더 포지션 x,y,z
         public Vector3 colScale; //충돌 콜라이더 스케일 x, y, z
+
+        //스테이터스 변수를 클래스 호출로 변경
         public int maxHealthPoint; //장애물의 최대 최력
         public int armor; //장애물의 방어력
         public int magicRegistant; //장애물의 마법 저항력

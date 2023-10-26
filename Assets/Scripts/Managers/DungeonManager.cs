@@ -22,8 +22,8 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
-    public float floorHorizontal; //가로 1칸 당 길이
-    public float floorVertical; //세로 1칸 당 길이
+    public float floorHorizontal; //가로 1칸 당 이동 거리
+    public float floorVertical; //세로 1칸 당 이동 거리
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
