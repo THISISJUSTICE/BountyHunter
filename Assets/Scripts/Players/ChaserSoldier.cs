@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -7,46 +8,40 @@ using UnityEngine;
 //총알 종류에 따른 갯수, 현재 사용할 총알
 public class ChaserSoldier : PlayerBasic
 {
-    skill[] skills;
+    Action[] skills; //각 버튼별 사용할 스킬 함수
     int curWeapon; //현재 들고 있는 무기를 확인(0: Q(권총), 1: W(소총, 기관총), 2: E(저격총, 샷건), 3: R(수류탄, 폭탄))
     SoldierGun[] havingWeapons; //현재 가지고 있는 무기
     bool[] cooldown; //현재 무기를 사용할 수 있는지 확인
 
     private void Awake() {
-        PlayerBasicInit();
+        ActivatorInit();
         SkillInit();
-        Test();
+        SoldierInit();
     }
 
-    protected override void Say()
-    {
-        Debug.Log("ChaserSoldier Say");
-    } 
-
     void SkillInit(){
-        skills = new skill[5];
-        skills[0] = new skill(NormalAttack);
-        skills[1] = new skill(NormalAttack);
-        skills[2] = new skill(NormalAttack);
-        skills[3] = new skill(NormalAttack);
-        skills[4] = new skill(NormalAttack);
-        havingWeapons = new SoldierGun[4];
+        skills = new Action[5];
+        skills[0] = ()=> NormalAttack();
+        skills[1] = ()=> NormalAttack();
+        skills[2] = ()=> NormalAttack();
+        skills[3] = ()=> NormalAttack();
+        skills[4] = ()=> NormalAttack();
         cooldown = new bool[4];
         for(int i=0; i<4; ++i) cooldown[i] = false;
     }
 
-    private void Start()
-    {
-        LRInit();
-        SoldierInit();
-    }
-
     void SoldierInit(){
+        havingWeapons = new SoldierGun[4];
         havingWeapons[0] = weaponPos.GetChild(0).GetChild(0).GetComponent<SoldierGun>();
         //havingWeapons[1] = weaponPos.GetChild(1).GetChild(0).GetComponent<SoldierGun>();
         //havingWeapons[2] = weaponPos.GetChild(2).GetChild(0).GetComponent<SoldierGun>();
         //havingWeapons[3] = weaponPos.GetChild(3).GetChild(0).GetComponent<SoldierGun>();
         curWeapon = 0;
+    }
+
+    private void Start()
+    {
+        PlayerBasicInit();
     }
 
     private void FixedUpdate() {

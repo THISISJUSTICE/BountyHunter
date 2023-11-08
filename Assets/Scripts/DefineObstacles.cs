@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.IO;
 using System.Text;
-using System.Linq;
-using UnityEditor.Timeline.Actions;
 
 //소환할 장애물 정보를 정의, 저장
 public class DefineObstacles : MonoBehaviour

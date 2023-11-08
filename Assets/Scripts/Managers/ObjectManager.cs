@@ -21,7 +21,7 @@ public class ObjectManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    public static ObjectManager Instance{
+    public static ObjectManager Inst{
         get{
             return instance;
         }

@@ -4,7 +4,7 @@ using System.ComponentModel.Design;
 using Unity.VisualScripting;
 using UnityEngine;
 
-//장애물은 플레이어의 방어력이 더 높거나 높은 속도 혹은 데미지를 가지면 부술 수 있음
+//장애물 오브젝트의 기본
 public class ObstacleBasic : ObjectsBasic
 {
     DungeonKind dungeonKind; //던전 종류
@@ -15,6 +15,8 @@ public class ObstacleBasic : ObjectsBasic
     public float appearSpeed; //장애물이 나타나는 속도
     public float appearWaitTime; //장애물이 나타날 때 대기 시간
     public int appearFrame; //장애물이 나타나는 프레임
+    public bool appearing; //현재 등장하고 있는지 확인
+    int[] curCoor; //던전 내에서의 좌표
     bool isAppear; //장애물이 등장했는지 확인
     BoxCollider obstacleColi; //장애물의 충돌
 
@@ -22,14 +24,18 @@ public class ObstacleBasic : ObjectsBasic
     private void Awake() {
         meshRenderer = GetComponent<MeshRenderer>();
         obstacleColi = transform.GetChild(0).GetComponent<BoxCollider>();
+        curCoor = new int[2];
+        
     }
 
-    public void ObstacleBasicInit(DefineObstacles.Data deObData, Vector3 appearPos, DungeonKind dungeonKind){
+    public void ObstacleBasicInit(DefineObstacles.Data deObData, Vector3 appearPos, DungeonKind dungeonKind, int x, int y){
         isAppear = false;
         meshRenderer.enabled = false;
+        obstacleColi.enabled = false;
         this.appearPos = appearPos;
         this.dungeonKind = dungeonKind;
-        obstacleColi.enabled = true;
+        curCoor[0] = x;
+        curCoor[1] = y;
 
         //장애물 데이터 입력
         waitPos = new Vector3(appearPos.x + deObData.waitPos.x, deObData.waitPos.y, appearPos.z + deObData.waitPos.z);
@@ -44,7 +50,6 @@ public class ObstacleBasic : ObjectsBasic
         //스테이터스 입력
         obstacleStatus.maxHealthPoint = deObData.maxHealthPoint;
         obstacleStatus.armor = deObData.armor;
-        ownArmor = obstacleStatus.armor;
         obstacleStatus.magicRegistant = deObData.magicRegistant;
         
         curHealthPoint = obstacleStatus.maxHealthPoint;
@@ -58,38 +63,86 @@ public class ObstacleBasic : ObjectsBasic
     //장애물 등장
     IEnumerator Appear(){
         isAppear = true;
+        appearing = false;
+        GameManager.Inst.curDungeonInfo[curCoor[0]][curCoor[1]] = 1;
         yield return new WaitForSeconds(appearWaitTime);
         meshRenderer.enabled = true;
+        appearing = true;
         for(int i=0; i<appearFrame; ++i){
             transform.position += (appearPos - waitPos) / appearFrame;
+            if(i==appearFrame-appearFrame/3) obstacleColi.enabled = true;
             yield return new WaitForSeconds(appearSpeed);
         } 
+        appearing = true;
     }
 
-    // //돌진을 받을 시
-    // public void Rushed(int armor, float acceleration){
-    //     HPDecrese(RushDamaged(obstacleStatus.armor, armor, acceleration));
-    // }
+    //이펙트를 큐에 보관(0: 피격 이펙트, 1: 파괴 이펙트)
+    public IEnumerator EffectDisappear(ParticleSystem effect, int effectKind){
+        yield return new WaitForSeconds(1);
+        switch(effectKind){
+            case 0:
+                ObjectManager.Inst.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
+                break;
+            case 1:
+                ObjectManager.Inst.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Push(effect);
+                break;
 
-    //피해를 받을 때 실행(오브젝트의 위치 반환)
-    public void Attacked(int attackDamage, int magicDamage, Vector3 dmgPos){
-        int dmg = obstacleStatus.CalculateDamage(attackDamage, magicDamage);
-        if(dmg > 0){
-            HPDecrese(dmg);
+        }
+        if(effectKind == 0)
+            ObjectManager.Inst.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
+        
+        effect.gameObject.SetActive(false);
+    }
+
+    
+    //파괴되었을 때 이펙트 생성
+    void CollapseEffect(){
+        ParticleSystem effect;
+        try{ //장애물이 사라진 뒤 실행하는 오류 대비
+            if(ObjectManager.Inst.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Count > 0){
+            effect = ObjectManager.Inst.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Pop();
+            }
+            else {
+                effect = Instantiate(ObjectManager.Inst.obstacleEffects.collapseEffectPrefabs[(int)dungeonKind]);
+            }
             
-            if(dmg > obstacleStatus.maxHealthPoint / 50) DamagedEffect(dmgPos);
+            effect.gameObject.SetActive(true);
+            effect.transform.position = transform.position;
+            StartCoroutine(EffectDisappear(effect, 1));
+        }
+        catch{
         }
     }
 
+    #region Override
+
+    //특정 스테이터스 반환
+    protected override int ReturnStatus(string kind){
+        switch(kind){
+            case "armor":
+                return obstacleStatus.armor;
+            case "maxHealthPoint":
+                return obstacleStatus.maxHealthPoint;
+        }
+
+        return 0;
+    }
+
+    //받는 피해량 계산
+    protected override int CalculateDamage(int attackDamage, int magicDamage){
+        int dmg = (int)Mathf.Ceil((float)attackDamage/obstacleStatus.armor) + (int)Mathf.Ceil((float)magicDamage/obstacleStatus.magicRegistant);
+        return dmg * 5;
+    }
+
     //피해를 입었을 때 효과
-    void DamagedEffect(Vector3 dmgPos){
+    protected override void DamagedEffect(Vector3 dmgPos){
         ParticleSystem effect;
         try{ //장애물이 사라진 뒤 실행하는 오류 대비
-            if(ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Count > 0){
-            effect = ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Pop();
+            if(ObjectManager.Inst.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Count > 0){
+            effect = ObjectManager.Inst.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Pop();
             }
             else {
-                effect = Instantiate(ObjectManager.Instance.obstacleEffects.damagedEffectPrefabs[(int)dungeonKind]);
+                effect = Instantiate(ObjectManager.Inst.obstacleEffects.damagedEffectPrefabs[(int)dungeonKind]);
             }
             
             dmgPos.z = (transform.position.z - dmgPos.z)/2 + transform.position.z;
@@ -101,53 +154,13 @@ public class ObstacleBasic : ObjectsBasic
         }
     }
 
-    //이펙트를 큐에 보관(0: 피격 이펙트, 1: 파괴 이펙트)
-    public IEnumerator EffectDisappear(ParticleSystem effect, int effectKind){
-        yield return new WaitForSeconds(1);
-        switch(effectKind){
-            case 0:
-                ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
-                break;
-            case 1:
-                ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Push(effect);
-                break;
-
-        }
-        if(effectKind == 0)
-            ObjectManager.Instance.obstacleEffects.damagedEffectObjects[(int)dungeonKind].Push(effect);
-        
-        effect.gameObject.SetActive(false);
-    }
-
-
-    //받은 데미지를 바탕으로 체력 감소
-    void HPDecrese(int dmg){
-        curHealthPoint -= dmg;
-        if(curHealthPoint <= 0) Death();
-    }
-
     //체력이 0이 되어 파괴
     protected override void Death(){
         meshRenderer.enabled = false;
         obstacleColi.enabled = false;
+        GameManager.Inst.curDungeonInfo[curCoor[0]][curCoor[1]] = 0;
         CollapseEffect();
     }
 
-    void CollapseEffect(){
-        ParticleSystem effect;
-        try{ //장애물이 사라진 뒤 실행하는 오류 대비
-            if(ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Count > 0){
-            effect = ObjectManager.Instance.obstacleEffects.collapseEffectObjects[(int)dungeonKind].Pop();
-            }
-            else {
-                effect = Instantiate(ObjectManager.Instance.obstacleEffects.collapseEffectPrefabs[(int)dungeonKind]);
-            }
-            
-            effect.gameObject.SetActive(true);
-            effect.transform.position = transform.position;
-            StartCoroutine(EffectDisappear(effect, 1));
-        }
-        catch{
-        }
-    }
+    #endregion
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -13,38 +14,38 @@ public class PlayerBasic : ActivatorBasic
     public float lrMoveDelay; //플레이어의 좌우 이동 딜레이
     public PlayerStatus playerStatus; //플레이어 스테이터스
     public Transform weaponPos; //무기를 잡고 있는 위치
-    protected int curMagicPoint; //플레이어 현재 마나
-    protected float curSpeed; //플레이어의 현재 이동 속도
-    protected float rushTime; //돌진을 진행한 시간
- 
 
-    protected delegate void skill(); //플레이어마다 가지고 있는 스킬 매개함수
+    protected int curMagicPoint; //플레이어 현재 마나
     protected float slowDown; //슬로우 효과를 받을 때 감소비율
-    public bool noMove; //이동 불가
-    public bool noLRMove; //좌우 이동 불가
+    protected bool noMove; //이동 불가
+    protected bool noLRMove; //좌우 이동 불가
+
+    float curSpeed; //플레이어의 현재 이동 속도
+    int curMoveWay; //현재 이동 방향 (왼쪽, 정면, 오른쪽): (플레이어: -1, 0 ,1)
+    float rushTime; //돌진을 진행한 시간
 
     #endregion
 
-    #region Awake, Start
+    #region Awake, Start 
 
-    private void Awake(){
+    private void Awake() {
+        ActivatorInit();
+    } 
+    
+    private void Start(){
         PlayerBasicInit(); 
     }
-
     protected void PlayerBasicInit(){
-        ActivatorInit();
+        LRInit();
         lrIndex = lrSpace.Length / 2;
         curHealthPoint = playerStatus.maxHealthPoint;
         curMagicPoint = playerStatus.maxMagicPoint;
         curSpeed = 0;
+        curMoveWay = 0;
         rushTime = 0;
         slowDown = 1;
         noMove = false;
         noLRMove = false;
-    }
-
-    private void Start(){
-        LRInit();
     }
 
     #endregion
@@ -65,7 +66,7 @@ public class PlayerBasic : ActivatorBasic
         int way = lrIndex > lrTemp ? -1 : 1;
 
         //이동 및 가속
-        if(!Input.GetKey(KeyCode.DownArrow) && !ObstacleCheck(0, gameObject.GetComponent<CapsuleCollider>().radius * 0.5f, 0.5f)){
+        if(!Input.GetKey(KeyCode.DownArrow) && !ObstacleCheck(Vector3.forward, gameObject.GetComponent<CapsuleCollider>().radius * 0.5f, 0.5f)){
             curSpeed = playerStatus.speed;
             if(Input.GetKey(KeyCode.UpArrow)){
                 curSpeed = playerStatus.acceleration;
@@ -77,60 +78,16 @@ public class PlayerBasic : ActivatorBasic
             curSpeed = 0;
             rushTime = 0;
         }
-        gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + curSpeed * slowDown);
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + curSpeed * slowDown);
 
         if(noLRMove) return;
         //좌우 이동
         if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && curMoveWay == 0){
-            if(!ObstacleCheck(way, gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, floorHorizontal)){
+            if(!ObstacleCheck(Vector3.right * way, gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, floorHorizontal)){
                 StartCoroutine(LRMove(lrIndex, lrTemp, lrMoveDelay));
                 lrIndex = lrTemp;
             }            
         }
-    }
-
-    // //좌우 이동 중 이동하려는 방향에 레이를 쏴서 장애물이 있는지 확인
-    // protected bool ObstacleLRCheck(int start, int end){
-    //     int way = start > end ? -1 : 1;
-    //     if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, 
-    //     transform.right * way, out RaycastHit hit, transform.rotation, floorHorizontal)){
-    //         if(hit.collider.tag == "Obstacle"){
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
-    // //전방이 막혀 있는지 확인
-    // protected bool ObstacleFCheck(){
-    //     if(Physics.BoxCast(transform.position, transform.lossyScale * gameObject.GetComponent<CapsuleCollider>().radius * 0.5f, 
-    //     transform.forward, out RaycastHit hit, transform.rotation, 0.5f)){
-    //         if((hit.collider.tag == "Obstacle" && rushTime <= 0.8f) || hit.collider.tag == "Background") {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // //좌우 이동에 약간의 딜레이 설정
-    // protected IEnumerator LRMove(int start, int end){
-    //     float gap = (lrSpace[end] - lrSpace[start]) / lrMoveFrame; //프레임 당 이동 값
-    //     gameObject.transform.position = new Vector3(lrSpace[lrIndex], gameObject.transform.position.y, gameObject.transform.position.z);
-    //     curMoveWay = start > end ? -1 : 1;
-    //     for(int i=0; i<lrMoveFrame; ++i){
-    //         gameObject.transform.position = new Vector3(gameObject.transform.position.x + gap, gameObject.transform.position.y, gameObject.transform.position.z);
-    //         yield return new WaitForSeconds(lrMoveDelay/lrMoveFrame);
-    //     }
-    //     curMoveWay = 0;
-    // }
-
-    protected override bool TagCheck(string tag, int way)
-    {   
-        if(tag == "Background" || rushTime <= 0.8f || way != 0){
-            return base.TagCheck(tag, way);
-        }
-        return false;
     }
 
     //이동 애니메이션
@@ -154,8 +111,9 @@ public class PlayerBasic : ActivatorBasic
         meshTransform.localRotation = Quaternion.Euler(0, rot, 0);
     }
 
-    protected void Attack(skill[] skills){
-        if(curMoveWay != 0) return;
+    //Q, W, E, R, A 버튼을 누름으로서 공격 혹은 스킬 발동
+    protected void Attack(Action[] skills){
+        if(curMoveWay != 0) return; //좌우 이동 중엔 사용 불가
         if(Input.GetKey(KeyCode.A)){
             skills[0]();
         }
@@ -179,18 +137,18 @@ public class PlayerBasic : ActivatorBasic
         ObstacleCollisionCheck(other);
     }
 
+    //돌진 중 장애물과 부딪히면 데미지를 받거나 입음
     protected void ObstacleCollisionCheck(Collision other){
-        //돌진 중 장애물과 부딪히면 데미지를 받거나 입음
+        
         if(other.gameObject.tag == "Obstacle"){
-            Debug.Log("충돌");
             if(curSpeed == playerStatus.acceleration && rushTime > 0.8f){
                 rushTime = 0;
                 
                 try{ //장애물이 파괴되는 동시에 부딪히는 경우 대비
                     ObstacleBasic obstacleBasic = other.transform.GetComponentInParent<ObstacleBasic>();
                     obstacleBasic.Rushed(playerStatus.armor, playerStatus.acceleration);
-                    StartCoroutine(BeSlowed(0.1f, 0.4f));
-                    RushDamaged(obstacleBasic.obstacleStatus.armor);
+                    StartCoroutine(BeSlowed(0.1f, 0.4f)); //부딪히면 약간의 슬로우
+                    Rushed(obstacleBasic.obstacleStatus.armor, playerStatus.acceleration); //플레이어도 부딪히면 데미지를 입음
                 }
                 catch{
                     return;
@@ -206,13 +164,48 @@ public class PlayerBasic : ActivatorBasic
         slowDown = 1;
     }
 
-    //돌진 시 입는 데미지
-    protected void RushDamaged(int armor){
+    #region Override
+
+    //공격을 받을 때 해당 위치에 피해 이펙트 생성
+    protected override void DamagedEffect(Vector3 dmgPos){
 
     }
 
-    //체력 감소
-    protected void HPDecrese(int dmg){
-
+    protected override IEnumerator LRMove(int start, int end, float delay)
+    {
+        curMoveWay = start > end ? -1 : 1;
+        StartCoroutine(base.LRMove(start, end, delay));
+        yield return new WaitForSeconds(delay * Mathf.Abs(start - end));
+        curMoveWay = 0;
     }
+
+    //특정 스테이터스 반환
+    protected override int ReturnStatus(string kind){
+        switch(kind){
+            case "armor":
+                return playerStatus.armor;
+            case "maxHealthPoint":
+                return playerStatus.maxHealthPoint;
+        }
+
+        return 0;
+    }
+
+    //받는 피해량 계산
+    protected override int CalculateDamage(int attackDamage, int magicDamage){
+        int dmg = (int)Mathf.Ceil((float)attackDamage/playerStatus.armor) + (int)Mathf.Ceil((float)magicDamage/playerStatus.magicRegistant);
+        return dmg * 5;
+    }
+
+    //장애물 확인 함수에서 특정 태그가 맞는지, 현재 돌진 중인지 확인
+    protected override bool TagCheck(string tag, Vector3 way)
+    {   
+        if(tag == "Monster" && rushTime <= 0.8f) return false;
+        if(tag == "Background" || rushTime <= 0.8f || way != Vector3.forward){
+            return base.TagCheck(tag, way);
+        }
+        return false;
+    }
+
+    #endregion
 }

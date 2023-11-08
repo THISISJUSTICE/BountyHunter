@@ -19,6 +19,8 @@ using UnityEngine;
 
 //플로어 100 = 터레인 1000(+10 끝부분 막기), 플로어의 길이는 10의 배수
 //장애물 위치 z(start + 10 ~ end-20), 세로 1칸 당 z: 3.5, 가로 1칸당 x: 1.6
+
+//던전 내 장애물, 몬스터 생성 등의 오브젝트 관리 전반을 담당
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
@@ -64,8 +66,8 @@ public class DungeonManager : MonoBehaviour
     void ReadStageFile(int stageLevel){
         TextAsset txtFile;
 
-        curObstaclePrefabs = ObjectManager.Instance.dungeonObjects.ReturnPrefabs(curDungeonKind);
-        curObstacleObjects = ObjectManager.Instance.dungeonObjects.ReturnObjects(curDungeonKind);
+        curObstaclePrefabs = ObjectManager.Inst.dungeonObjects.ReturnPrefabs(curDungeonKind);
+        curObstacleObjects = ObjectManager.Inst.dungeonObjects.ReturnObjects(curDungeonKind);
         createdObjects = new Stack<ObstacleBasic>[curObstacleObjects.Length];
 
         for(int i=0; i<createdObjects.Length; ++i){
@@ -99,13 +101,16 @@ public class DungeonManager : MonoBehaviour
                 dungeonWidth = int.Parse(line.Split(',')[1]);
 
                 dungeonInfo = new List<int>[(int)Math.Truncate((dungeonLength - 30) / floorVertical)]; //맵의 앞 뒤 끝 부분은 장애물 생성 X
+                GameManager.Inst.curDungeonInfo = new List<int>[dungeonInfo.Length];
                 for(int i=0; i<dungeonInfo.Length; ++i){
                     dungeonInfo[i] = new List<int>();
+                    GameManager.Inst.curDungeonInfo[i] = new List<int>();
                 }
             }
             else{
                 for(int i=0; i<dungeonWidth; ++i){
                     dungeonInfo[index].Add(int.Parse(line.Split(',')[i]));
+                    GameManager.Inst.curDungeonInfo[index].Add(0);
                 }
                 ++index;
             }
@@ -149,13 +154,14 @@ public class DungeonManager : MonoBehaviour
             x = floorHorizontal * 2;
             for(int j=0; j<dungeonInfo[i].Count; ++j, x-=floorHorizontal){
                 if(dungeonInfo[i][j] == 99) continue;
-                CreateObstacle(dungeonInfo[i][j], x, z);
+                CreateObstacle(dungeonInfo[i][j], x, z, i, j);
+
             }
         }
     }
 
     //풀링 큐에 오브젝트가 없으면 생성
-    void CreateObstacle(int index, float x, float z){
+    void CreateObstacle(int index, float x, float z, int i, int j){
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
@@ -165,7 +171,7 @@ public class DungeonManager : MonoBehaviour
             curob = Instantiate(curObstaclePrefabs[num]);
         }
         curob.gameObject.SetActive(true);
-        curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind);
+        curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind, i, j);
         createdObjects[num].Push(curob);
     }
 
@@ -173,7 +179,8 @@ public class DungeonManager : MonoBehaviour
     public IEnumerator DungeonEnd(DungeonKind dungeonKind){
         yield return new WaitForSeconds(1); //장애물에서 처리할 연산 대기
         DeleteObstacle();
-        ObjectManager.Instance.dungeonObjects.UpdateStack(dungeonKind, curObstacleObjects);
+        ObjectManager.Inst.dungeonObjects.UpdateStack(dungeonKind, curObstacleObjects);
+        GameManager.Inst.curDungeonInfo = null;
     }
 
     //던전이 끝나고 생성된 오브젝트를 큐에 보관, 비활성화
