@@ -79,7 +79,6 @@ public class MonsterBasic : ActivatorBasic
         int behavior = Random.Range(0, 5);
 
         if(behavior < 2) { //Idle
-            Debug.Log("Idle");
             return Random.Range(1, 4);
         }
         else { //Move
@@ -103,7 +102,7 @@ public class MonsterBasic : ActivatorBasic
     protected IEnumerator GoTarget(){
         int next;
 
-        Debug.Log($"최초 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}]");
+        // Debug.Log($"최초 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}]");
 
         while(targetCoor[0] != curVerCoor){ //세로 칸이 같을 때까지 반복
             next = SearchRoad();
@@ -139,7 +138,7 @@ public class MonsterBasic : ActivatorBasic
             yield return new WaitForSeconds(turnSpeed + monsterStatus.speed*Mathf.Abs(next) + 1);
         }
 
-        Debug.Log($"최종 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}], curPos: [{transform.position.x}, {transform.position.z}]");
+        // Debug.Log($"최종 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}], curPos: [{transform.position.x}, {transform.position.z}]");
         waitTime = time + 1;
     }
 
@@ -188,19 +187,21 @@ public class MonsterBasic : ActivatorBasic
         float goal = (aimRot + 360) % 360;
         float curRot = (transform.eulerAngles.y+360)%360;
 
-        Debug.Log($"goal: {goal}, curRot: {curRot}");
         if(curRot != goal){ //회전할 필요가 있는지 확인
             float angle = goal - curRot;
+            float reverseAngle = angle + 360 * (angle / Mathf.Abs(angle) * -1);
+            float animSpeed;
             float gap;
 
-            if(Mathf.Abs(goal - curRot) > Mathf.Abs(angle + 360 * (angle / Mathf.Abs(angle) * -1))){
-                angle += 360 * (angle / Mathf.Abs(angle) * -1);
+            //더 짧은 각도의 회전을 계산
+            if(Mathf.Abs(angle) > Mathf.Abs(reverseAngle)){
+                angle = reverseAngle;
             }
             
             gap = angle/(float)moveFrame;
+            animSpeed = Mathf.Abs(angle)/90 * 0.5f;
 
-            Debug.Log($"Turn gap: {gap}, angle: {angle}");
-            anim.SetFloat("MoveWay", angle / Mathf.Abs(angle));
+            anim.SetFloat("MoveWay", angle / Mathf.Abs(angle) * animSpeed);
             for(int i=0; i<moveFrame; ++i){
                 transform.Rotate(0, gap,0);
                 yield return new WaitForSeconds(turnSpeed/moveFrame);
@@ -242,14 +243,16 @@ public class MonsterBasic : ActivatorBasic
 
     protected override IEnumerator LRMove(int start, int end, float delay)
     {
-        anim.SetFloat("MoveSpeed", 0.5f);
+        anim.SetFloat("MoveSpeed", 0.4f);
         StartCoroutine(base.LRMove(start, end, delay));
-        yield return new WaitForSeconds(delay * Mathf.Abs(start - end));
+        yield return new WaitForSeconds(delay * Mathf.Abs(start - end) + 0.1f);
         anim.SetFloat("MoveSpeed", 0);
     }
 
-    private void OnCollisionEnter(Collision other) {
-        
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.tag == "Player"){
+            Debug.Log("AggroOn");
+        }
     }
 
     //체력이 0이 되어 파괴
