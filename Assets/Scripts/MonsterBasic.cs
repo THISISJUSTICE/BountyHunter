@@ -19,6 +19,7 @@ public class MonsterBasic : ActivatorBasic
     protected bool aggro; //어그로가 끌렸는지 확인
     protected float time; //흐르는 시간
     protected float waitTime; //대기 시간
+    protected PlayerBasic playerBasic;
     bool isMoving; //현재 움직이는 상태인지 확인
     int curVerCoor; //현재 세로 좌표
     int[] targetCoor; //목표 좌표
@@ -58,17 +59,19 @@ public class MonsterBasic : ActivatorBasic
 
     //시간의 흐름
     protected void TimeFlow(){
-        if(aggro){ //어그로가 끌렸을 때
-            anim.SetFloat("MoveSpeed", 1);
-            return;
-        }
+        
 
         time += Time.deltaTime;  
 
         if(time >= waitTime){
+            time = 0;
+            if(aggro){ //어그로가 끌렸을 때
+                OnAggro();
+                return;
+            }
+
             anim.SetFloat("MoveSpeed", 0);
             isMoving = false;
-            time = 0;
             waitTime = Think();
         }
 
@@ -211,18 +214,35 @@ public class MonsterBasic : ActivatorBasic
         }        
     }
 
-    void AggroSetActive(Vector3 target){
+    private void OnTriggerEnter(Collider other) {
+        PlayerTriggerCheck(other.gameObject.tag, other.transform.position);
+    }
+
+    //몬스터의 감지 범위에 플레이어가 들어왔는지 확인
+    void PlayerTriggerCheck(string tag, Vector3 targetPos){
+        if(tag == "Chaser" || tag == "Player"){
+            //사이에 장애물이 없는지 한번 더 확인
+            if(Physics.Linecast(transform.position, targetPos, out RaycastHit hit)){
+                if(hit.transform.tag == "Chaser" || hit.transform.tag == "Player"){
+                    AggroSetActive(targetPos);
+                }
+            }
+            
+        }
+    }
+
+    //어그로 활성화(모든 진행중인 코루틴 중단)
+    void AggroSetActive(Vector3 targetPos){
         aggro = true;
         StopAllCoroutines();
+        waitTime = 0;
+    }
+
+    void OnAggro(){
+
     }
 
     #region Override
-
-    protected override bool TagCheck(string tag, Vector3 way)
-    {   
-        if(tag == "Background") return true;
-        return base.TagCheck(tag, way);
-    }
 
     //필요한 스테이터스를 반환
     protected override int ReturnStatus(string kind){
@@ -247,12 +267,6 @@ public class MonsterBasic : ActivatorBasic
         StartCoroutine(base.LRMove(start, end, delay));
         yield return new WaitForSeconds(delay * Mathf.Abs(start - end) + 0.1f);
         anim.SetFloat("MoveSpeed", 0);
-    }
-
-    private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.tag == "Player"){
-            Debug.Log("AggroOn");
-        }
     }
 
     //체력이 0이 되어 파괴

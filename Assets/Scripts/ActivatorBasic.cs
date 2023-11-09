@@ -40,9 +40,9 @@ public class ActivatorBasic : ObjectsBasic
     }
 
     //이동 방향에 장애물이 있는지 확인
-    protected bool ObstacleCheck(Vector3 way, float rayRadius, float rayLen){
-        if(Physics.BoxCast(transform.position, transform.lossyScale * rayRadius, way, out RaycastHit hit, transform.rotation, rayLen)){
-            if(TagCheck(hit.collider.tag, way)){
+    protected bool ObstacleCheck(Vector3 end, float rayRadius, float rayLen){
+        if(Physics.BoxCast(transform.position, transform.lossyScale * rayRadius, end, out RaycastHit hit, transform.rotation, rayLen)){
+            if(TagCheck(hit.collider.tag, end)){
                 return true;
             }
         }
