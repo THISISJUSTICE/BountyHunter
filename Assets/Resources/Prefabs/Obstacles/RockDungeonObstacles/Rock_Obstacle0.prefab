@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 7946587218401312659}
   - component: {fileID: 7946587218401312658}
   - component: {fileID: 7946587218401312657}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Rock_Obstacle0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,3 +165,4 @@ MonoBehaviour:
   appearSpeed: 0.05
   appearWaitTime: 0
   appearFrame: 20
+  appearing: 0

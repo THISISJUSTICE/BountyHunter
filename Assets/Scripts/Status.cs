@@ -10,7 +10,8 @@ public class Status
 
 [System.Serializable]
 public class MonsterStatus:Status{
-    public float speed; //기본 속도(몬스터의 경우 이동 시간)
+    public float speed; //기본 속도 거리(몬스터의 경우 이동 시간)
+    public float acceleration; //돌진 속도 거리
     public int maxMagicPoint; //최대 마나
     public int attackDamage; //공격력
     public int magicDamage; //마법공격력
@@ -19,7 +20,6 @@ public class MonsterStatus:Status{
 [System.Serializable]
 public class PlayerStatus:MonsterStatus{
     public int level; //플레이어 레벨
-    public float acceleration; //플레이어 돌진 속도
 }
 
 public class PlayData{
