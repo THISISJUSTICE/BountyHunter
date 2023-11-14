@@ -83,7 +83,7 @@ public class PlayerBasic : ActivatorBasic
         if(noLRMove) return;
         //좌우 이동
         if(hor != 0 && lrTemp >= 0 && lrTemp < lrSpace.Length && curMoveWay == 0){
-            if(!ObstacleCheck(Vector3.right * way, gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, floorHorizontal)){
+            if(!ObstacleCheck(Vector3.right * way, gameObject.GetComponent<CapsuleCollider>().radius * 0.9f, Common.floorHorizontal)){
                 StartCoroutine(LRMove(lrIndex, lrTemp, lrMoveDelay));
                 lrIndex = lrTemp;
             }            
@@ -200,7 +200,7 @@ public class PlayerBasic : ActivatorBasic
     //장애물 확인 함수에서 특정 태그가 맞는지, 현재 돌진 중인지 확인
     protected override bool TagCheck(string tag, Vector3 way)
     {   
-        if(tag == "Monster" && rushTime <= 0.8f) return false;
+        if(tag == "Monster" && rushTime <= 0.8f) return true;
         if(tag == "Background" || rushTime <= 0.8f || way != Vector3.forward){
             return base.TagCheck(tag, way);
         }

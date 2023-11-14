@@ -33,8 +33,8 @@ public class GunBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         if(other.transform.tag == "Obstacle"){
-            ObstacleBasic obstacle;
-            obstacle =  other.transform.GetComponentInParent<ObstacleBasic>();
+            ObjectsBasic obstacle;
+            obstacle =  other.transform.GetComponentInParent<ObjectsBasic>();
             obstacle.Attacked(damage, 0, transform.position);
             Disappear();
         }

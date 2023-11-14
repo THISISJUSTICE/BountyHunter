@@ -24,8 +24,6 @@ using UnityEngine;
 public class DungeonManager : MonoBehaviour
 {
     #region Variable
-    public float floorHorizontal; //가로 1칸 당 이동 거리
-    public float floorVertical; //세로 1칸 당 이동 거리
     int dungeonLength; //던전의 세로 길이(길이 = 플로어의 scale z값 * 10) (이 길이를 참고하여 적절한 길이의 배경 터레인을 선택)
     int dungeonWidth; //던전의 가로 길이(5 or 7)
     List<int>[] dungeonInfo; //던전의 정보(장애물 발생, 몬스터, 스폰 위치 및 정보)
@@ -45,9 +43,7 @@ public class DungeonManager : MonoBehaviour
     #endregion
 
     private void Awake() {
-        Common common = new Common();
-        floorHorizontal = common.floorHorizontal;
-        floorVertical = common.floorVertical;
+
     }
 
     private void Start() {
@@ -100,7 +96,7 @@ public class DungeonManager : MonoBehaviour
                 dungeonLength = int.Parse(line.Split(',')[0]);
                 dungeonWidth = int.Parse(line.Split(',')[1]);
 
-                dungeonInfo = new List<int>[(int)Math.Truncate((dungeonLength - 30) / floorVertical)]; //맵의 앞 뒤 끝 부분은 장애물 생성 X
+                dungeonInfo = new List<int>[(int)Math.Truncate((dungeonLength - 30) / Common.floorVertical)]; //맵의 앞 뒤 끝 부분은 장애물 생성 X
                 GameManager.Inst.curDungeonInfo = new List<int>[dungeonInfo.Length];
                 for(int i=0; i<dungeonInfo.Length; ++i){
                     dungeonInfo[i] = new List<int>();
@@ -150,9 +146,9 @@ public class DungeonManager : MonoBehaviour
         float x; //가로
         float z = 10; //세로
 
-        for(int i=0; i<dungeonInfo.Length; ++i, z+=floorVertical){
-            x = floorHorizontal * 2;
-            for(int j=0; j<dungeonInfo[i].Count; ++j, x-=floorHorizontal){
+        for(int i=0; i<dungeonInfo.Length; ++i, z+=Common.floorVertical){
+            x = Common.floorHorizontal * 2;
+            for(int j=0; j<dungeonInfo[i].Count; ++j, x-=Common.floorHorizontal){
                 if(dungeonInfo[i][j] == 99) continue;
                 CreateObstacle(dungeonInfo[i][j], x, z, i, j);
 

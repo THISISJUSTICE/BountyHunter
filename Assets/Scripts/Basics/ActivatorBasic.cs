@@ -11,47 +11,54 @@ public class ActivatorBasic : ObjectsBasic
     protected int mapSpace; // 맵의 좌우 칸 수(무조건 홀수)
     protected float[] lrSpace; //좌우 이동 시 포지션 값
     protected int lrIndex; //현재 좌우 위치
-    protected float floorHorizontal; //가로 1칸 당 길이
-    protected float floorVertical; //세로 1칸 당 길이
-    protected Animator anim;
+    protected Animator anim; //애니메이터
     protected Transform meshTransform; //오브젝트의 메쉬의 트랜스폼
-    protected Rigidbody rigid;
+    protected Rigidbody rigid; //리지드바디
 
     protected void ActivatorInit(){
         meshTransform = transform.GetChild(0).GetComponent<Transform>();
         anim = meshTransform.GetComponent<Animator>();
-
-        Common common = new Common();
-        floorHorizontal = common.floorHorizontal;
-        floorVertical = common.floorVertical;
     }
 
     protected void LRInit(){
         mapSpace = GameManager.Inst.curDungeonInfo[0].Count; 
         lrSpace = new float[mapSpace];
         int temp = lrSpace.Length / 2; 
-        float space = 0 - (floorHorizontal * temp);
+        float space = 0 - (Common.floorHorizontal * temp);
         lrIndex = temp;
 
         for(int i=0; i<lrSpace.Length; ++i){
             lrSpace[i] = space;
-            space += floorHorizontal;
+            space += Common.floorHorizontal;
         }
     }
 
-    //이동 방향에 장애물이 있는지 확인
-    protected bool ObstacleCheck(Vector3 end, float rayRadius, float rayLen){
-        if(Physics.BoxCast(transform.position, transform.lossyScale * rayRadius, end, out RaycastHit hit, transform.rotation, rayLen)){
+    //이동 방향에 장애물이 있는지 확인(방향, 크기, 길이, 아무것도 감지되지 않을 때)
+    protected bool ObstacleCheck(Vector3 end, float rayRadius, float rayLen, bool noHitReturn = false){
+        int layerMask = (-1) - (1 << LayerMask.NameToLayer("Radar"));
+        if(Physics.BoxCast(transform.position, new Vector3(1,1,1) * rayRadius, end, out RaycastHit hit, Quaternion.identity, rayLen, layerMask)){
             if(TagCheck(hit.collider.tag, end)){
                 return true;
             }
+        }
+        else{
+            return noHitReturn;
         }
         return false;
     }
 
     //좌우 이동
     protected virtual IEnumerator LRMove(int start, int end, float delay){
-        float gap = (lrSpace[end] - lrSpace[start]) / (float)moveFrame / Mathf.Abs(start - end); //프레임 당 이동 값
+        float gap = 0;
+
+        try{ //배열의 범위를 벗어나는 예외 대비
+            gap = (lrSpace[end] - lrSpace[start]) / (float)moveFrame / Mathf.Abs(start - end); //프레임 당 이동 값
+        
+        }
+        catch{
+            Debug.Log($"end: {end}, start: {start}");
+        }
+
         for(int i=0; i<moveFrame * Mathf.Abs(start - end); ++i){
             transform.position = new Vector3(transform.position.x + gap, transform.position.y, transform.position.z);
             yield return new WaitForSeconds(delay/(float)moveFrame);

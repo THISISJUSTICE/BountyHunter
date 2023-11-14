@@ -1,13 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
-
-//자유 이동 구현
-//어그로 시 이동
-//등장, 공격, 사망
-//몬스터의 세로 위치는 장애물의 세로 위치에 floorVerticle/2를 더한 값
+using UnityEngine.UIElements;
+using Random = UnityEngine.Random; //System, UnityEngine 사이의 Random 함수의 구분
 
 //몬스터 오브젝트의 기본
 public class MonsterBasic : ActivatorBasic
@@ -16,32 +14,45 @@ public class MonsterBasic : ActivatorBasic
     public float frontLength; //전방 확인을 위한 레이의 길이
     public float turnSpeed; //초당 회전하는 각도
     public int moveRange; //어그로가 끌리지 않는 경우 몬스터가 현재 위치에서 움직일 수 있는 최대 이동 범위
+    public float aggroTime; //어그로 지속 시간(플레이어가 시야 거리에 없을 때 어그로가 풀릴 때까지 걸리는 시간)
+
     protected bool aggro; //어그로가 끌렸는지 확인
     protected float time; //흐르는 시간
     protected float waitTime; //대기 시간
-    protected PlayerBasic playerBasic;
-    bool isMoving; //현재 움직이는 상태인지 확인
+    protected PlayerBasic playerBasic; //어그로 끌린 플레이어
+    protected delegate IEnumerator CoroutineDelegate();
+    protected Action[] breakAtks; //장애물 등을 부술 때 공격
+    protected Action[] basicAtks; //플레이어를 공격
+    protected Action lethalAtk; //각 몬스터 별 필살기(없을 경우 null)
+    protected CapsuleCollider closeRange; //근접 공격 범위
+    protected bool isBreakAtk; //다음 행동이 breakAtk인지 확인
+    protected bool isAttack; //현재 공격 중인지 확인
+
     int curVerCoor; //현재 세로 좌표
     int[] targetCoor; //목표 좌표
+    bool isTurn; //현재 회전 중인지 확인
+    Vector3 frontPos; //오브젝트 기준의 전방 위치
 
-    private void Awake() {
-        Init();
-    }
+    // private void Awake() {
+    //     Init();
+    // }
 
     protected void Init(){
         ActivatorInit();
         rigid = GetComponent<Rigidbody>();
         targetCoor = new int[2];
+        closeRange = transform.GetChild(2).GetComponent<CapsuleCollider>();
     }
 
-    private void Start() {
-        MonsterBasicInit(2, 6, 2, 1);
-    }
+    // private void Start() {
+    //     MonsterBasicInit(2, 6, 2, 1);
+    // }
 
-    public void MonsterBasicInit(int curPos, int x, int z, float height){
+    public virtual void MonsterBasicInit(int curPos, int x, int z, float height){
         LRInit();
         aggro = false;
-        isMoving = false;
+        isTurn = false;
+        isBreakAtk = false;
         lrIndex = curPos;
         time = 0;
         waitTime = 0;
@@ -50,29 +61,29 @@ public class MonsterBasic : ActivatorBasic
         curVerCoor = x;
         lrIndex = z;
 
-        float posx = floorHorizontal*(GameManager.Inst.curDungeonInfo[0].Count / 2) - lrIndex*floorHorizontal;
-        float posz = 10 + curVerCoor*floorVertical + floorVertical/2;
-
+        //설정한 좌표 값에 따라 포지션 값 설정
+        float posx = Common.floorHorizontal*(mapSpace / 2) - lrIndex*Common.floorHorizontal;
+        float posz = 10 + curVerCoor*Common.floorVertical + Common.floorVertical/2;
         transform.position = new Vector3(posx, height, posz);
     }
 
-    private void FixedUpdate() {
-        TimeFlow();
-    }
+    // private void FixedUpdate() {
+    //     TimeFlow();
+    // }
 
     //시간의 흐름
     protected void TimeFlow(){
-        if(aggro){ //어그로가 끌렸을 때
-                OnAggro();
-                return;
-            }
+        time += Time.deltaTime; 
 
-        time += Time.deltaTime;  
+        if(aggro){ //어그로가 끌렸을 때
+            if(!isAttack) //현재 공격 중이 아닐 때 움직이기
+                OnAggro();
+            return;
+        }
 
         if(time >= waitTime){
             time = 0;
             anim.SetFloat("MoveSpeed", 0);
-            isMoving = false;
             waitTime = Think();
         }
 
@@ -86,6 +97,11 @@ public class MonsterBasic : ActivatorBasic
 
         if(behavior < 2) { //Idle
             float randTime = Random.Range(1, 4);
+
+            // float posx = floorHorizontal*(mapSpace / 2) - lrIndex*floorHorizontal;
+            // float posz = 10 + curVerCoor*floorVertical + floorVertical/2;
+            // transform.position = new Vector3(posx, transform.position.y, posz);
+            StopAllCoroutines();
             StartCoroutine(FixCoordinate(randTime));
             return randTime;
         }
@@ -99,8 +115,6 @@ public class MonsterBasic : ActivatorBasic
                 targetCoor[1] = Random.Range(0, GameManager.Inst.curDungeonInfo[0].Count());
             }while(targetCoor[0] == curVerCoor && targetCoor[1] == lrIndex);
 
-            isMoving = true;
-
             StartCoroutine(GoTarget());
             return 100;
         }
@@ -109,8 +123,8 @@ public class MonsterBasic : ActivatorBasic
     //좌표에 맞는 포지션 값으로 조정
     IEnumerator FixCoordinate(float time){
         float frame = 5.0f;
-        float posx = floorHorizontal*(GameManager.Inst.curDungeonInfo[0].Count / 2) - lrIndex*floorHorizontal;
-        float posz = 10 + curVerCoor*floorVertical + floorVertical/2;
+        float posx = Common.floorHorizontal*(mapSpace / 2) - lrIndex*Common.floorHorizontal;
+        float posz = 10 + curVerCoor*Common.floorVertical + Common.floorVertical/2;
         float gapx = (posx - transform.position.x) / frame;
         float gapz = (posz - transform.position.z) / frame;
 
@@ -124,8 +138,6 @@ public class MonsterBasic : ActivatorBasic
     //목표한 좌표로 이동
     IEnumerator GoTarget(){
         int next;
-
-        // Debug.Log($"최초 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}]");
 
         while(targetCoor[0] != curVerCoor){ //세로 칸이 같을 때까지 반복
             next = SearchRoad();
@@ -150,7 +162,7 @@ public class MonsterBasic : ActivatorBasic
                 yield return new WaitForSeconds(turnSpeed + 1);
             }
             
-            StartCoroutine(Move(floorVertical));
+            StartCoroutine(Move(Common.floorVertical));
             curVerCoor += next;
             yield return new WaitForSeconds(monsterStatus.speed);
         }
@@ -161,7 +173,6 @@ public class MonsterBasic : ActivatorBasic
             yield return new WaitForSeconds(turnSpeed + monsterStatus.speed*Mathf.Abs(next) + 1);
         }
 
-        // Debug.Log($"최종 GoTarget target: [{targetCoor[0]}, {targetCoor[1]}], cur: [{curVerCoor}, {lrIndex}], curPos: [{transform.position.x}, {transform.position.z}]");
         waitTime = time + 1;
     }
 
@@ -206,11 +217,13 @@ public class MonsterBasic : ActivatorBasic
     }
 
     //목표한 각도가 되도록 회전(전후좌우: 0, 180, -90, 90)
-    IEnumerator Turn(float aimRot){
+    IEnumerator Turn(float aimRot){ 
         float goal = (aimRot + 360) % 360;
         float curRot = (transform.eulerAngles.y+360)%360;
 
-        if(curRot != goal){ //회전할 필요가 있는지 확인
+        if(curRot != goal && !isTurn){ //회전할 필요가 있는지 확인
+            isTurn = true;
+
             float angle = goal - curRot;
             float reverseAngle = angle + 360 * (angle / Mathf.Abs(angle) * -1);
             float animSpeed;
@@ -232,54 +245,91 @@ public class MonsterBasic : ActivatorBasic
             }
             anim.SetFloat("MoveWay", 0);
             transform.rotation = Quaternion.Euler(transform.eulerAngles.x, goal, transform.eulerAngles.z);  
+            isTurn = false;
         }        
     }
 
     #endregion
 
-    private void OnTriggerEnter(Collider other) {
-        PlayerTriggerCheck(other.gameObject.tag, other.transform);
+    // private void OnTriggerEnter(Collider other) {
+    //     PlayerTriggerEnterCheck(other.gameObject.tag, other.transform);
+    // }
+
+    private void OnTriggerExit(Collider other) {
+        
     }
 
     #region Aggro
 
     //몬스터의 감지 범위에 플레이어가 들어왔는지 확인(어그로 상태가 아닌 경우)
-    protected void PlayerTriggerCheck(string tag, Transform target){
+    protected void PlayerTriggerEnterCheck(string tag, Transform target){
         if(aggro) return;
         if(tag == "Chaser" || tag == "Player"){
-            int layerMask = (-1) - (1 << LayerMask.NameToLayer("Radar"));
             //목표 사이에 장애물이 없는지 한번 더 확인
-            if(Physics.BoxCast(transform.position, new Vector3(0.2f,0.2f,0.2f), target.position - transform.position, 
-            out RaycastHit hit, Quaternion.identity, Vector3.Distance(target.position, transform.position), layerMask)){
-                if(hit.transform.tag == "Chaser" || hit.transform.tag == "Player"){
-                    Debug.Log("Aggro On");
-                    //AggroSetActive(target);
-                }
-            }
-            
+            if(ObstacleCheck(target.position - transform.position, 0.1f, Vector3.Distance(target.position, transform.position), true)){
+                AggroSetActive(target);
+            }            
         }
     }
 
     //어그로 활성화(모든 진행중인 코루틴 중단)
-    void AggroSetActive(Transform target){
+    protected void AggroSetActive(Transform target){
+        Debug.Log("어그로 활성화");
         aggro = true;
+        isTurn = false;
         StopAllCoroutines();
         playerBasic = target.GetComponent<PlayerBasic>();
+        anim.SetFloat("MoveWay", 0);
+        anim.SetFloat("MoveSpeed", 0);
     }
 
     //어그로 비활성화
     IEnumerator AggroSetDeactive(Transform target){
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(aggroTime);
         aggro = false;
         waitTime = 0;
         playerBasic = null;
     }
 
+    //어그로 상태일 때의 행동
     void OnAggro(){
         if(playerBasic != null){
-            Debug.Log("현재 어그로 상태");
             Quaternion targetRot = Quaternion.LookRotation(playerBasic.transform.position - transform.position);
             StartCoroutine(Turn(targetRot.eulerAngles.y));
+            if(Mathf.Abs(transform.eulerAngles.y - targetRot.eulerAngles.y) < 10){
+                if(ObstacleCheck(frontPos - transform.position, 0.2f, 6)){
+                    Attack();
+                }
+                else{
+                    transform.Translate(0,0,monsterStatus.acceleration);
+                    anim.SetFloat("MoveSpeed", 1);
+                }
+            }
+        }
+    }
+
+    protected void Attack(){
+        //1/5의 확률로 필살기 발동
+        if(lethalAtk != null){
+            int rand = Random.Range(0, 10);
+            if(rand == 0) lethalAtk();
+            return;
+        }
+
+        //각 공격 함수 중 랜덤으로 선택하여 실행
+        if(isBreakAtk){
+            
+            int rand = Random.Range(0, breakAtks.Length);
+            breakAtks[rand]();
+        }
+        else{
+            
+            int rand = Random.Range(0, breakAtks.Length + basicAtks.Length);
+            if(rand < breakAtks.Length) breakAtks[rand]();
+            else{
+                rand -= breakAtks.Length;
+                basicAtks[rand]();
+            }
         }
     }
 
@@ -316,10 +366,12 @@ public class MonsterBasic : ActivatorBasic
     {
         if(aggro){
             if(tag == "Chaser" || tag == "Player"){
-                //공격 함수
+                isBreakAtk = false;
+                return true;
             }
             else if(tag == "Obstacle"){
-                //파괴 함수
+                isBreakAtk = true;
+                return true;
             }
         }
         else if(tag == "Chaser" || tag == "Player"){
