@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunBullet : MonoBehaviour
+public class GunBullet : StrikeArea
 {
     public int bulletKind; //총알의 종류
-    public int damage; //피해량
     public float speed; //총알 이동 속도
     public float existTime; //총알이 존재하는 시간
     public Rigidbody rigid;
@@ -33,12 +32,9 @@ public class GunBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         if(other.transform.tag == "Obstacle"){
-            ObjectsBasic obstacle;
-            obstacle =  other.transform.GetComponentInParent<ObjectsBasic>();
-            obstacle.Attacked(damage, 0, transform.position);
+            AttackObject(other, transform.position);
             Disappear();
-        }
-        
+        } 
         
     }
 }

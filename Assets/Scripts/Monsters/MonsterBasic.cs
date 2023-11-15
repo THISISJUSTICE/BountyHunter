@@ -24,7 +24,7 @@ public class MonsterBasic : ActivatorBasic
     protected Action[] breakAtks; //장애물 등을 부술 때 공격
     protected Action[] basicAtks; //플레이어를 공격
     protected Action lethalAtk; //각 몬스터 별 필살기(없을 경우 null)
-    protected CapsuleCollider closeRange; //근접 공격 범위
+    protected StrikeArea strikeArea; //근접 공격 범위
     protected bool isBreakAtk; //다음 행동이 breakAtk인지 확인
     protected bool isAttack; //현재 공격 중인지 확인
 
@@ -41,7 +41,7 @@ public class MonsterBasic : ActivatorBasic
         ActivatorInit();
         rigid = GetComponent<Rigidbody>();
         targetCoor = new int[2];
-        closeRange = transform.GetChild(2).GetComponent<CapsuleCollider>();
+        strikeArea = transform.GetChild(2).GetComponent<StrikeArea>();
     }
 
     // private void Start() {
@@ -57,6 +57,7 @@ public class MonsterBasic : ActivatorBasic
         time = 0;
         waitTime = 0;
         transform.rotation = Quaternion.Euler(0,180,0);
+        strikeArea.gameObject.SetActive(false);
 
         curVerCoor = x;
         lrIndex = z;
@@ -266,7 +267,7 @@ public class MonsterBasic : ActivatorBasic
         if(aggro) return;
         if(tag == "Chaser" || tag == "Player"){
             //목표 사이에 장애물이 없는지 한번 더 확인
-            if(ObstacleCheck(target.position - transform.position, 0.1f, Vector3.Distance(target.position, transform.position), true)){
+            if(ObstacleCheck(target.position - transform.position, 0.1f, Vector3.Distance(target.position, transform.position) * 1.5f, true)){
                 AggroSetActive(target);
             }            
         }
@@ -316,6 +317,7 @@ public class MonsterBasic : ActivatorBasic
             return;
         }
 
+        StopAllCoroutines();
         //각 공격 함수 중 랜덤으로 선택하여 실행
         if(isBreakAtk){
             

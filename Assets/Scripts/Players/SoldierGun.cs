@@ -38,6 +38,7 @@ public class SoldierGun : MonoBehaviour
         }
         else{
             bullet = Instantiate(ObjectManager.Inst.playerObjects.bulletPrefabs[bulletKind].gameObject, bulletPos.position, Quaternion.identity).GetComponent<GunBullet>();
+            bullet.TagSetting(new string[] {"Obstacle", "Monster"});
         }
         bullet.gameObject.SetActive(true);
         Rigidbody bulletRigid = bullet.rigid;
