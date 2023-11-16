@@ -10,6 +10,7 @@ TagManager:
   - Bullet
   - ChaserBullet
   - Monster
+  - MonsterBullet
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - Background
   - Terrain
   - Radar
-  - 
+  - MonsterBullet
   - 
   - 
   - 

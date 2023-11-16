@@ -157,7 +157,7 @@ public class DungeonManager : MonoBehaviour
     }
 
     //풀링 큐에 오브젝트가 없으면 생성
-    void CreateObstacle(int index, float x, float z, int i, int j){
+    void CreateObstacle(int index, float x, float z, int row, int col){
         ObstacleBasic curob;
         int num = obstacleDatas[index].prefabKind;
         if(curObstacleObjects[num].Count > 0){
@@ -167,7 +167,7 @@ public class DungeonManager : MonoBehaviour
             curob = Instantiate(curObstaclePrefabs[num]);
         }
         curob.gameObject.SetActive(true);
-        curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind, i, j);
+        curob.ObstacleBasicInit(obstacleDatas[index], new Vector3(x, obstacleDatas[index].appearheight, z), curDungeonKind, row, col);
         createdObjects[num].Push(curob);
     }
 

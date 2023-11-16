@@ -48,9 +48,11 @@ public class StrikeArea : MonoBehaviour
     }
 
     protected void AttackObject(Collision other, Vector3 dmgPos){
-        ObjectsBasic obstacle;
-        obstacle =  other.transform.GetComponentInParent<ObjectsBasic>();
-        obstacle.Attacked((damage + addDmg) * extraDmg, 0, dmgPos);
+        ObjectsBasic target;
+        target =  other.transform.GetComponentInParent<ObjectsBasic>();
+        if(target == null) target.transform.GetComponent<ObjectsBasic>();
+        Debug.Log($"other.tag: {other.transform.tag}, obstacle.tag: {target.transform.tag}, dmg: {(damage + addDmg) * extraDmg}");
+        target.Attacked((damage + addDmg) * extraDmg, 0, dmgPos);
         extraDmg = 1;
     }
 }

@@ -2,14 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 
 //Nightmare 몬스터 스크립트
 public class MonsterNightmare : MonsterBasic
 {
-    public GameObject[] claws; //ClawAttack에 사용할 손톱 이펙트
+    public PlayableDirector clawPlayable;
     
     BoxCollider hitbox; //strikeArea의 Collider(몬스터마다 Collider의 종류가 다를 수 있음)
+    
     
     private void Awake() {
         NightmareInit();
@@ -21,7 +23,7 @@ public class MonsterNightmare : MonsterBasic
         basicAtks = new Action[1];
         lethalAtk = null;
         
-        breakAtks[0] = () => StartCoroutine(ClawAttack());
+        breakAtks[0] = () => StartCoroutine(CloseAttacks(clawPlayable, 3.3167f/2, new Vector3(0.5f, 2, 3), new Vector3(6, 4, 5)));
         breakAtks[1] = () => StartCoroutine(HornAttack());
         basicAtks[0] = () => StartCoroutine(BiteAttack());
 
@@ -34,21 +36,13 @@ public class MonsterNightmare : MonsterBasic
         hitbox.size = size;
     }
 
-    public float ftime;
-    public float stime;
-
-    IEnumerator CloseAttacks(string animName, float time1, Action action1, float time2, Action action2){
-        anim.Play(animName);
+    //근접 공격
+    IEnumerator CloseAttacks(PlayableDirector playable, float cooltime, Vector3 hitboxPos, Vector3 hitboxSize){
         isAttack = true;
+        HitboxSetting(hitboxPos, hitboxSize);
+        playable.Play();
 
-        yield return new WaitForSeconds(time1);
-        action1();
-
-        yield return new WaitForSeconds(0.01f);
-        strikeArea.gameObject.SetActive(true);
-
-        yield return new WaitForSeconds(time2);
-        action2();
+        yield return new WaitForSeconds(cooltime);
 
         isAttack = false;
     }
@@ -56,24 +50,15 @@ public class MonsterNightmare : MonsterBasic
     //할퀴기 공격
     IEnumerator ClawAttack(){
         Debug.Log("ClawAttack");
-        anim.Play("ClawAttack");
+       
         isAttack = true;
-
-        // yield return new WaitForSeconds(0.055f);
-        yield return new WaitForSeconds(ftime);
-
-        for(int i=0; i<3; ++i) claws[i].SetActive(true);
-        strikeArea.AddDmgSetting(1);
         HitboxSetting(new Vector3(0.5f, 2, 3), new Vector3(6, 4, 5));
+        
+
+        strikeArea.AddDmgSetting(1);
+        
 
         yield return new WaitForSeconds(0.01f);
-        strikeArea.gameObject.SetActive(true);
-
-        // yield return new WaitForSeconds(0.064f);
-        yield return new WaitForSeconds(stime);
-
-        for(int i=0; i<3; ++i) claws[i].SetActive(false);
-        strikeArea.gameObject.SetActive(false);
         
         isAttack = false;
     }
@@ -98,15 +83,7 @@ public class MonsterNightmare : MonsterBasic
         TimeFlow();
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerStay(Collider other) {
         PlayerTriggerEnterCheck(other.gameObject.tag, other.transform);
-    }
-
-    public override void MonsterBasicInit(int curPos, int x, int z, float height)
-    {
-        base.MonsterBasicInit(curPos, x, z, height);
-        for(int i=0; i<3; ++i){
-            claws[i].SetActive(false);
-        }
     }
 }

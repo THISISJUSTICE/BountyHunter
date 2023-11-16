@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.AI;
 using Random = UnityEngine.Random; //System, UnityEngine 사이의 Random 함수의 구분
 
 //몬스터 오브젝트의 기본
@@ -20,13 +21,13 @@ public class MonsterBasic : ActivatorBasic
     protected float time; //흐르는 시간
     protected float waitTime; //대기 시간
     protected PlayerBasic playerBasic; //어그로 끌린 플레이어
-    protected delegate IEnumerator CoroutineDelegate();
     protected Action[] breakAtks; //장애물 등을 부술 때 공격
     protected Action[] basicAtks; //플레이어를 공격
     protected Action lethalAtk; //각 몬스터 별 필살기(없을 경우 null)
     protected StrikeArea strikeArea; //근접 공격 범위
     protected bool isBreakAtk; //다음 행동이 breakAtk인지 확인
     protected bool isAttack; //현재 공격 중인지 확인
+    protected NavMeshAgent nav;
 
     int curVerCoor; //현재 세로 좌표
     int[] targetCoor; //목표 좌표
@@ -40,6 +41,7 @@ public class MonsterBasic : ActivatorBasic
     protected void Init(){
         ActivatorInit();
         rigid = GetComponent<Rigidbody>();
+        nav = GetComponent<NavMeshAgent>();
         targetCoor = new int[2];
         strikeArea = transform.GetChild(2).GetComponent<StrikeArea>();
     }
@@ -48,24 +50,24 @@ public class MonsterBasic : ActivatorBasic
     //     MonsterBasicInit(2, 6, 2, 1);
     // }
 
-    public virtual void MonsterBasicInit(int curPos, int x, int z, float height){
+    public void MonsterBasicInit(int curPos, int row, int col, float height){
         LRInit();
         aggro = false;
         isTurn = false;
         isBreakAtk = false;
+        nav.enabled = false;
         lrIndex = curPos;
         time = 0;
         waitTime = 0;
         transform.rotation = Quaternion.Euler(0,180,0);
         strikeArea.gameObject.SetActive(false);
 
-        curVerCoor = x;
-        lrIndex = z;
-
+        curVerCoor = row;
+        lrIndex = col;
+        
         //설정한 좌표 값에 따라 포지션 값 설정
-        float posx = Common.floorHorizontal*(mapSpace / 2) - lrIndex*Common.floorHorizontal;
-        float posz = 10 + curVerCoor*Common.floorVertical + Common.floorVertical/2;
-        transform.position = new Vector3(posx, height, posz);
+        Vector2 pos = Common.CoorToVec(row, col);
+        transform.position = new Vector3(pos.x, height, pos.y + Common.floorVertical/2);
     }
 
     // private void FixedUpdate() {
@@ -252,10 +254,6 @@ public class MonsterBasic : ActivatorBasic
 
     #endregion
 
-    // private void OnTriggerEnter(Collider other) {
-    //     PlayerTriggerEnterCheck(other.gameObject.tag, other.transform);
-    // }
-
     private void OnTriggerExit(Collider other) {
         
     }
@@ -267,7 +265,7 @@ public class MonsterBasic : ActivatorBasic
         if(aggro) return;
         if(tag == "Chaser" || tag == "Player"){
             //목표 사이에 장애물이 없는지 한번 더 확인
-            if(ObstacleCheck(target.position - transform.position, 0.1f, Vector3.Distance(target.position, transform.position) * 1.5f, true)){
+            if(ObstacleCheck(target.position - transform.position, 0.1f, Vector3.Distance(target.position, transform.position), true)){
                 AggroSetActive(target);
             }            
         }
@@ -278,8 +276,10 @@ public class MonsterBasic : ActivatorBasic
         Debug.Log("어그로 활성화");
         aggro = true;
         isTurn = false;
+        
         StopAllCoroutines();
         playerBasic = target.GetComponent<PlayerBasic>();
+
         anim.SetFloat("MoveWay", 0);
         anim.SetFloat("MoveSpeed", 0);
     }
@@ -295,17 +295,37 @@ public class MonsterBasic : ActivatorBasic
     //어그로 상태일 때의 행동
     void OnAggro(){
         if(playerBasic != null){
-            Quaternion targetRot = Quaternion.LookRotation(playerBasic.transform.position - transform.position);
-            StartCoroutine(Turn(targetRot.eulerAngles.y));
-            if(Mathf.Abs(transform.eulerAngles.y - targetRot.eulerAngles.y) < 10){
-                if(ObstacleCheck(frontPos - transform.position, 0.2f, 6)){
-                    Attack();
-                }
-                else{
-                    transform.Translate(0,0,monsterStatus.acceleration);
-                    anim.SetFloat("MoveSpeed", 1);
-                }
+            // Quaternion targetRot = Quaternion.LookRotation(playerBasic.transform.position - transform.position);
+            // StartCoroutine(Turn(targetRot.eulerAngles.y));
+            //transform.LookAt(playerBasic.transform);
+            anim.SetFloat("MoveSpeed", 1);
+            
+            
+            //Debug.Log("nav.Destination" + nav.destination);
+
+            nav.enabled = true;
+            nav.SetDestination(playerBasic.transform.position);
+
+            if(ObstacleCheck(frontPos - transform.position, 1f, 1)){
+                anim.SetFloat("MoveSpeed", 0);
+                nav.enabled = false;
+                Attack();
             }
+            else{
+                anim.SetFloat("MoveSpeed", 1);
+                nav.speed = monsterStatus.acceleration;
+                
+            }
+            // if(Mathf.Abs(transform.eulerAngles.y - targetRot.eulerAngles.y) < 10){
+            //     if(ObstacleCheck(frontPos - transform.position, 1f, 6)){
+            //         anim.SetFloat("MoveSpeed", 0);
+            //         Attack();
+            //     }
+            //     else{
+            //         transform.Translate(0,0,monsterStatus.acceleration);
+            //         anim.SetFloat("MoveSpeed", 1);
+            //     }
+            // }
         }
     }
 
@@ -378,6 +398,9 @@ public class MonsterBasic : ActivatorBasic
         }
         else if(tag == "Chaser" || tag == "Player"){
             return true;
+        }
+        else{
+            Debug.Log("TagCheck Monster tag: " + tag);
         }
         return false;
     }
